@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Timelike</string>
+
+    <string name="feed_title_section">Feed</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="instagram_client_id">917f26e3e2294d7ba7528951a1b189ff</string>
+    <string name="instagram_client_secret">720db9994875478daf492c3182f669fb</string>
+    <string name="instagram_callback_url">oauth://ASNE</string>
+
+    <string name="parse_client_key">jqrRDEEsCiobRhnVHTjMLTLc8nZkUoIIWeCdHLb6</string>
+    <string name="parse_client_secret">BVY4VXhGbkOMwd7CeBvQO7sU3E0jEG0Of0uH5WM</string>
+
+</resources>

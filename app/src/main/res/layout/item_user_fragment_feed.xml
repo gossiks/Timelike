@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.joooonho.SelectableRoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar_user_item_fragment_feed"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"
+
+        app:sriv_left_top_corner_radius="16dip"
+        app:sriv_right_top_corner_radius="0dip"
+        app:sriv_left_bottom_corner_radius="48dip"
+        app:sriv_right_bottom_corner_radius="16dip"
+        app:sriv_border_width="2dip"
+        app:sriv_border_color="#008fea"
+        app:sriv_oval="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="username"
+        android:id="@+id/username_item_user_fragment_feed"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/avatar_user_item_fragment_feed"
+        android:layout_toEndOf="@+id/avatar_user_item_fragment_feed"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp" />
+
+</RelativeLayout>
