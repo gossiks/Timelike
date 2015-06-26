@@ -17,6 +17,7 @@ import org.kazin.timelike.MainActivity;
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
@@ -34,15 +35,16 @@ public class InstagramManager {
 
     private InstagramManager() {
        mContext = TimelikeApp.getContext();
-       createConnection();
+        createConnection();
     }
 
-    private void createConnection(){
+    private void createConnection( ){
         mInstagram = new Instagram(MainActivity.getMainActivity(),
                 mContext.getApplicationContext().getString(R.string.instagram_client_id),
                 mContext.getString(R.string.instagram_client_secret),
                 mContext.getString(R.string.instagram_callback_url));
         mInstagramSession = mInstagram.getSession();
+
     }
 
     public static InstagramManager getInstance() {
@@ -65,6 +67,7 @@ public class InstagramManager {
     public void authorize(BackendManager.InstagramAutorizeClk callback){
         mInstagram.authorize(new InstagramAuthLstn(callback));
     }
+
 
     public String getInstagramUserName(){
         return  mInstagramSession.getUser().username;
@@ -131,6 +134,11 @@ public class InstagramManager {
         public void onCancel() {
             mInstagramAutorizeClk.cancel();
         }
+    }
+
+    //misc outer
+    public String getToken(){
+        return mInstagramSession.getAccessToken();
     }
 
     //misc methods

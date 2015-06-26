@@ -13,7 +13,7 @@
     <string name="instagram_client_secret">720db9994875478daf492c3182f669fb</string>
     <string name="instagram_callback_url">oauth://ASNE</string>
 
-    <string name="parse_client_key">jqrRDEEsCiobRhnVHTjMLTLc8nZkUoIIWeCdHLb6</string>
-    <string name="parse_client_secret">BVY4VXhGbkOMwd7CeBvQO7sU3E0jEG0Of0uH5WM</string>
+    <string name="parse_app_id">vkOmdpKK7NAw6MOL1zXZrSGdZ69QtbV05NwpHV9G</string>
+    <string name="parse_client_key">8MBAp9Rs8vYBLjOzjVOt60B7G8U731OhYWg2oJkz</string>
 
 </resources>

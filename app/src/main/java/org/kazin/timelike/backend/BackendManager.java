@@ -1,6 +1,5 @@
 package org.kazin.timelike.backend;
 
-import android.animation.TimeAnimator;
 import android.content.Context;
 import android.util.Log;
 
@@ -8,7 +7,6 @@ import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.UserTimelike;
 
-import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 public class BackendManager {
     private static BackendManager manager;
     private InstagramManager mInstagramManager;
-    private ParseManager mParseManager;
+    private FireManager mFireManager;
 
     private Context mContext;
 
@@ -26,7 +24,7 @@ public class BackendManager {
     public BackendManager() {
         mContext = TimelikeApp.getContext();
         mInstagramManager = InstagramManager.getInstance();
-        mParseManager = ParseManager.getInstance();
+        mFireManager = FireManager.getInstance();
     }
 
     public static BackendManager getInstance() {
@@ -39,50 +37,59 @@ public class BackendManager {
     }
 
     public void initialize(final BackendInitializeClk callback){
+        //todo getrid
+
+        mFireManager.loginUser(null);
         if(!mInstagramManager.isInstagramActive()){
             mInstagramManager.initialize();
         }
-
         if(mInstagramManager.getCurrentUser()!=null){
             mCurrentUser = mInstagramManager.getCurrentUser();
-            callback.success();
+            authorizeParseIfNecessary(callback);
         }
-        else {mInstagramManager.authorize(new InstagramAutorizeClk() {
-            @Override
-            public void success(UserTimelike user) {
+        else{
+            mInstagramManager.authorize(new InstagramAutorizeClk() {
+                @Override
+                public void success(UserTimelike user) {
+                    mCurrentUser = mInstagramManager.getCurrentUser();
+                    authorizeParseIfNecessary(callback);
 
-                mCurrentUser = mInstagramManager.getCurrentUser();
-
-                if(mCurrentUser.username != mParseManager.getParseUsername()){
-                    mParseManager.loginParse(mCurrentUser,new ParseLoginClk() {
-                        @Override
-                        public void success() {
-                            initialize(callback);
-                        }
-
-                        @Override
-                        public void error(String error) {
-                            Log.e("apk", "BackendManager error Parse Login: " + error);
-                        }
-                    });
-                    return;
                 }
 
-                callback.success();
-            }
+                @Override
+                public void error(String error) {
 
-            @Override
-            public void error(String error) {
+                }
 
-            }
+                @Override
+                public void cancel() {
 
-            @Override
-            public void cancel() {
+                }
+            });
+        }
 
-            }
-        });}
+    }
 
+    private void authorizeParseIfNecessary(final BackendInitializeClk callback) {
+        if(mCurrentUser.username != mFireManager.getParseUsername()){
+            mFireManager.loginParse(mCurrentUser,new ParseLoginClk() {
+                @Override
+                public void success() {
+                    //initialize(callback);
+                    callback.success();
+                }
 
+                @Override
+                public void error(String error) {
+                    Log.e("apk", "BackendManager error Parse Login: " + error);
+                }
+            });
+
+            return;
+        }
+        else{
+            callback.success();
+        }
     }
 
     public UserTimelike getCurrentUser(){
@@ -94,7 +101,7 @@ public class BackendManager {
     }
 
     public void getFeedParse(ArrayList<ImageTimelike> feed,BackendGetFeedClk callback){
-        mParseManager.getFeed(feed, callback);
+        mFireManager.getFeed(feed, callback);
     }
 
     //misc to other

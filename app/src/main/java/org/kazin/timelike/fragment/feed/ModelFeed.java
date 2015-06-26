@@ -54,16 +54,16 @@ public class ModelFeed {
                 mBackend.getFeedParse(feed, new BackendManager.BackendGetFeedClk() {
                     @Override
                     public void successInst(ArrayList<ImageTimelike> feed) {
-
+                        presenter.setFeed(feed);
                     }
                 });
-                presenter.setFeed(feed);
             }
 
         });
     }
     public void onLikeReceived(String imageid, long timelike){
         //TODO
+
     }
 
 

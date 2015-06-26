@@ -1,7 +1,13 @@
 package org.kazin.timelike.backend;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
@@ -22,106 +28,88 @@ import org.kazin.timelike.object.UserTimelike;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alexey on 16.06.2015.
  */
-public class ParseManager {
+public class FireManager {
 
-    private static ParseManager manager;
+    private static FireManager manager;
     private Context mContext;
+    private Firebase mFireBase;
 
-    public ParseManager() {
+    public FireManager() {
         createConnection();
     }
 
     private void createConnection(){
         mContext = TimelikeApp.getContext();
-        ParseCrashReporting.enable(mContext);
-        Parse.initialize(mContext,
-                mContext.getString(R.string.parse_client_key),
-                mContext.getString(R.string.parse_client_secret));
+        Firebase.setAndroidContext(mContext);
+        mFireBase = new Firebase("https://timelike.firebaseio.com/");
     }
 
-    public static ParseManager getInstance(){
+    public static FireManager getInstance(){
         if(manager == null){
-            return manager = new ParseManager();
+            return manager = new FireManager();
         }
         else{
             return manager;
         }
     }
 
-    public void initialize(){
+    public void initializeConnection(){
         createConnection();
     }
 
+
+
     public String getParseUsername() {
-        if (ParseUser.getCurrentUser() == null) {
             return "n.o.u.s.e.r";
-        }
-        return ParseUser.getCurrentUser().getUsername();
     }
 
-    public void loginParse(final UserTimelike user, final BackendManager.ParseLoginClk parseLoginClk){
-        ParseQuery<ParseUser> queryCheckUserAvaliable = ParseUser.getQuery();
-        queryCheckUserAvaliable.whereEqualTo(
-                mContext.getString(R.string.parse_username),
-                user.username
-        );
-        queryCheckUserAvaliable.getFirstInBackground(new GetCallback<ParseUser>() {
+    public void loginParse(final UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
+        Firebase users = mFireBase.child("users").child("tempUser");
+        users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void done(ParseUser parseUser, ParseException e) {
-                if (parseUser == null) {
-                    signUp(user, parseLoginClk);
-                } else {
-                    login(user, parseLoginClk);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("apkapk","users data snapshot"+dataSnapshot+". getValue: "+dataSnapshot.getValue());
+                if(dataSnapshot.getValue().equals(null)){
+                    signUp(user, fireLoginClk);
                 }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
     }
 
-    private void signUp(UserTimelike user, final BackendManager.ParseLoginClk parseLoginClk){
-        ParseUser userParse = new ParseUser();
-        userParse.setUsername(user.username);
-        userParse.setPassword(generatePassword(user));
-
-        userParse.signUpInBackground(new SignUpCallback() {
+    private void signUp(UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
+        mFireBase.createUser(user.username + "@unknownemail.com", generatePassword(user), new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    parseLoginClk.success();
-                } else {
-                    parseLoginClk.error(e.toString());
-                }
+            public void onSuccess(Map<String, Object> result) {
+                System.out.println("Successfully created user account with uid: " + result.get("uid"));
+                fireLoginClk.success();
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                Log.d("apkapk","Firebase user create error: "+firebaseError);
+                fireLoginClk.error(firebaseError.toString());
             }
         });
     }
 
-    private void login(final UserTimelike user, final BackendManager.ParseLoginClk parseLoginClk){
-        ParseUser userParse = new ParseUser();
-        userParse.setUsername(user.username);
-        userParse.setPassword(generatePassword(user));
-
-        ParseUser.logInInBackground(user.username, generatePassword(user), new LogInCallback() {
-            @Override
-            public void done(ParseUser parseUser, ParseException e) {
-                if (e == null) {
-                    parseLoginClk.success();
-                } else {
-                    parseLoginClk.error(e.toString());
-                }
-            }
-        });
-    }
 
     public void getFeed(final ArrayList<ImageTimelike> images, final BackendManager.BackendGetFeedClk callback){
-        ParseQuery<ParseObject> queryGetFeed = ParseQuery.getQuery(Const.IMAGE_CLASS_PARSE);
+
+
+        /*ParseQuery<ParseObject> queryGetFeed = ParseQuery.getQuery(Const.IMAGE_CLASS_PARSE);
         Collection<String> idImageInst = new ArrayList<>(images.size());
-        int i = 0;
         for(ImageTimelike image: images){
             idImageInst.add(image.getImageId());
-            i++;
         }
         queryGetFeed.whereContainedIn(Const.IMAGE_ID_INST_PARSE, idImageInst);
         queryGetFeed.findInBackground(new FindCallback<ParseObject>() {
@@ -132,12 +120,14 @@ public class ParseManager {
                     ImageTimelike image = getImage(idImage, images);
                     if (image != null) {
                         image.setTimelike(list.get(i).getInt(Const.IMAGE_TIMELIKE_PARSE));
+
                         //TODO check if actual object ImageTimelike in ArrayList changes
                     }
+                    callback.successInst(images);
                 }
 
             }
-        });
+        });*/
     }
 
 
