@@ -64,17 +64,17 @@ public class FireManager {
 
 
 
-    public String getParseUsername() {
+    public String getFireUsername() {
             return "n.o.u.s.e.r";
     }
 
-    public void loginParse(final UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
+    public void loginFire(final UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
         Firebase users = mFireBase.child("users").child("tempUser");
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("apkapk","users data snapshot"+dataSnapshot+". getValue: "+dataSnapshot.getValue());
-                if(dataSnapshot.getValue().equals(null)){
+                if(dataSnapshot.getValue()==null){
                     signUp(user, fireLoginClk);
                 }
             }

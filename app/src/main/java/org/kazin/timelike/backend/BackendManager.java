@@ -37,22 +37,19 @@ public class BackendManager {
     }
 
     public void initialize(final BackendInitializeClk callback){
-        //todo getrid
-
-        mFireManager.loginUser(null);
         if(!mInstagramManager.isInstagramActive()){
             mInstagramManager.initialize();
         }
         if(mInstagramManager.getCurrentUser()!=null){
             mCurrentUser = mInstagramManager.getCurrentUser();
-            authorizeParseIfNecessary(callback);
+            authorizeFireIfNecessary(callback);
         }
         else{
             mInstagramManager.authorize(new InstagramAutorizeClk() {
                 @Override
                 public void success(UserTimelike user) {
                     mCurrentUser = mInstagramManager.getCurrentUser();
-                    authorizeParseIfNecessary(callback);
+                    authorizeFireIfNecessary(callback);
 
                 }
 
@@ -70,9 +67,9 @@ public class BackendManager {
 
     }
 
-    private void authorizeParseIfNecessary(final BackendInitializeClk callback) {
-        if(mCurrentUser.username != mFireManager.getParseUsername()){
-            mFireManager.loginParse(mCurrentUser,new ParseLoginClk() {
+    private void authorizeFireIfNecessary(final BackendInitializeClk callback) {
+        if(mCurrentUser.username != mFireManager.getFireUsername()){
+            mFireManager.loginFire(mCurrentUser, new ParseLoginClk() {
                 @Override
                 public void success() {
                     //initialize(callback);
