@@ -31,18 +31,36 @@ public class BackendManager2 {
         return mManager;
     }
 
-    //misc for other
-    interface GetFeedClk{
-        void success(ArrayList<ImageTimelike> feed);
-        void error(String error);
+    public void getFeed(GetFeedClk callback){
+        mInstagramManager2.getFeed(callback);
     }
+
+    public void LoginInst(String username, String password,LoginInstClk callback){
+        mInstagramManager2.login(username, password, callback);
+    }
+
+    public void LoginFireAnon(LoginFireAnonClk callback){
+        mFireManager2.loginAnon(callback);
+    }
+
+    //misc for other
 
     interface LoginInstClk{
         void success(UserTimelike user);
         void error(String error);
     }
 
-    interface LoginFireClk{
+    interface LoginFireAnonClk{
         void success();
+        void error(String error);
+    }
+
+    interface GetFeedClk{
+        void success(ArrayList<ImageTimelike> feed);
+        void error(String error);
+    }
+
+    interface GetFeedTimelikes{
+        void
     }
 }
