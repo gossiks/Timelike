@@ -16,6 +16,7 @@ import com.nineoldandroids.animation.Animator;
 
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.FeedAdapter2;
+import org.kazin.timelike.object.ImageTimelike;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
@@ -60,6 +61,10 @@ public class FragmentFeed extends Fragment{
         mFeedView.setAdapter(adapter);
     }
 
+    public void setTimelike(ImageTimelike timelike) {
+        ((FeedAdapter2)mFeedView.getAdapter()).setTimelike(timelike);
+    }
+
     //misc
 
     public static class LikeListener implements View.OnTouchListener { // for like button. It is used in adapter of feed.
@@ -90,6 +95,7 @@ public class FragmentFeed extends Fragment{
                 lastDuration = System.currentTimeMillis() - lastDown;
                 stopWoble();
                 ViewerFeed viewerFeed = ViewerFeed.getInstance(null); //TODO. Can crush here if viewer is not initalized yet. (barely possible)
+                viewerFeed.setTimelike(imageId, lastDuration);
                 viewerFeed.onLikeReceived(imageId, lastDuration);
             }
             return false;

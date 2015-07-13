@@ -61,6 +61,10 @@ public class ImageTimelike {
         return imageUrl;
     }
 
+    public void setImageId(String imageId){
+        this.imageId = imageId;
+    }
+
     public String getImageId() {
         return imageId;
     }

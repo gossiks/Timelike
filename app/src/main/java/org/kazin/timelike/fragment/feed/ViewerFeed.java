@@ -1,5 +1,6 @@
 package org.kazin.timelike.fragment.feed;
 
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import org.kazin.timelike.misc.FeedAdapter2;
@@ -58,5 +59,16 @@ public class ViewerFeed {
 
     public void setMessage(String message){
         Toast.makeText(TimelikeApp.getContext(), message, Toast.LENGTH_SHORT);
+    }
+
+    public void setTimelike(ImageTimelike timelike) {
+        fragment.setTimelike(timelike);
+    }
+
+    public void setTimelike(String imageId, long lastDuration) {
+        ImageTimelike image = new ImageTimelike();
+        image.setImageId(imageId);
+        image.setTimelike(lastDuration);
+        setTimelike(image);
     }
 }

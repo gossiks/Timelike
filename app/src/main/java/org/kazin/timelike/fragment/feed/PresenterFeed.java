@@ -52,4 +52,7 @@ public class PresenterFeed {
     }
 
 
+    public void setTimelike(ImageTimelike image) {
+        viewer.setTimelike(image);
+    }
 }

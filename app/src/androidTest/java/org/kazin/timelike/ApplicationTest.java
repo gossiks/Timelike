@@ -14,13 +14,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void getFeedAndShow(){
-            BackendManager backendManager = BackendManager.getInstance();
+            /*BackendManager backendManager = BackendManager.getInstance();
 
             backendManager.initialize(new BackendManager.BackendInitializeClk() {
                 @Override
                 public void success() {
 
                 }
-            });
+            });*/
     }
 }
