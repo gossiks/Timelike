@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="TimelikeTheme" parent="AppTheme">
+    <style name="TimelikeTheme" parent="Theme.AppCompat.Light">
+        //appcompat material design
+        <item name="colorPrimary">@color/orange_light_timelike</item>
+        <item name="colorPrimaryDark">@color/orange_dark_timelike</item>
+        <item name="colorAccent">@color/blue_dark_timelike</item>
 
+        <item name="android:textColorPrimary">@color/white_textColorPrimary_timelike</item>
+        <item name="android:textColor">@color/black_textColor_timelike</item>
+        <item name="android:textColorSecondary">@color/black_textColorSecondary_timelike</item>
     </style>
 
+    <style name="TimelikeTheme.CommentTextStyle" parent="TimelikeTheme">
+        <item name="android:textColor">@color/black_textColor_timelike</item>
+    </style>
 
+    //colors
+<color name="orange_light_timelike">#FFC734</color>
+<color name="orange_dark_timelike">#B28100</color>
+
+<color name="blue_light_timelike">#295EFF</color>
+<color name="blue_medium_timelike">#104BFF</color>
+<color name="blue_dark_timelike">#002CB2</color>
+
+<color name="white_textColorPrimary_timelike">#e1f8f8f8</color>
+<color name="black_textColor_timelike">#db535252</color>
+<color name="black_textColorSecondary_timelike">#db9f9e9e</color>
 
 </resources>

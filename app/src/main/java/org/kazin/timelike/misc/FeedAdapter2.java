@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import net.londatiga.android.instagram.util.StringUtil;
+
 import org.kazin.timelike.R;
 import org.kazin.timelike.fragment.feed.FragmentFeed;
 import org.kazin.timelike.object.ImageTimelike;
@@ -91,9 +93,17 @@ public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapte
                 .into(holderImage.image);
         holderImage.description.setText(image.getUsername() + " " + image.getDescription());
 
-        holderImage.comments.setAdapter(new ArrayAdapter<>(mContext
-                , android.R.layout.simple_list_item_1, image.getCommentsStringArray(3)));//3 - because who cares about other comments.
-        setListViewHeightBasedOnItems(holderImage.comments);
+        if(image.getComments()==null){
+
+        }
+        else{
+
+            holderImage.comments.setAdapter(new ArrayAdapter<>(mContext
+                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3)));//3 - because who cares about other comments.
+            setListViewHeightBasedOnItems(holderImage.comments);
+        }
+
+
         holderImage.like_button.setText(Long.toString(image.getTimelike()));
 
         return convertView;
@@ -181,6 +191,7 @@ public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapte
             for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
                 View item = listAdapter.getView(itemPos, null, listView);
                 item.measure(0, 0);
+
                 totalItemsHeight += item.getMeasuredHeight();
             }
 
@@ -197,8 +208,13 @@ public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapte
             return true;
 
         } else {
+            listView.setVisibility(View.GONE);
             return false;
         }
 
+    }
+
+    private void setListViewGone(ListView listView){
+        listView.setVisibility(View.GONE);
     }
 }

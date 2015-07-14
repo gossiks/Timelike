@@ -39,11 +39,11 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:id="@+id/comments_feed_item_user_fragment"
         android:layout_below="@+id/description_feed_item"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="#ffffc734" />
+         />
 
 </RelativeLayout>
