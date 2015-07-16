@@ -130,7 +130,7 @@ public class InstagramManager {
                     ArrayList<ImageTimelike.Comment> comments =  parseComments(img.getJSONObject("comments"));
                     ImageTimelike imageTimelike = new ImageTimelike(
                             img.getJSONObject("images")
-                                    .getJSONObject("low_resolution").getString("url"),
+                                    .getJSONObject("standard_resolution").getString("url"),
                             img.getString("id"), img.getJSONObject("user").getString("username"), img.getJSONObject("likes").getLong("count"),
                             img.getJSONObject("user").getString("profile_picture"), img.getJSONObject("caption").getString("text")
                             , img.getString("type"), comments);

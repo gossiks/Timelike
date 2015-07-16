@@ -6,19 +6,50 @@
         <item name="colorPrimaryDark">@color/orange_dark_timelike</item>
         <item name="colorAccent">@color/blue_dark_timelike</item>
 
+
         <item name="android:textColorPrimary">@color/white_textColorPrimary_timelike</item>
         <item name="android:textColor">@color/black_textColor_timelike</item>
         <item name="android:textColorSecondary">@color/black_textColorSecondary_timelike</item>
+
+        //Tab customization
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarSize">80dip</item>
+        <item name="actionBarSize">80dip</item>
+
+        //common settings
+
     </style>
 
     <style name="TimelikeTheme.CommentTextStyle" parent="TimelikeTheme">
         <item name="android:textColor">@color/black_textColor_timelike</item>
     </style>
 
+
+    <style name="ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:height">30dp</item>
+        <item name="height">30dp</item>
+    </style>
+
+    <style name="TimelikeTheme.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:background">@color/blue_medium_timelike</item>
+    </style>
+
+    <style name="Transparent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name ="android:windowBackground">@color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorForeground">#fff</item>
+    </style>
+
     //colors
 <color name="orange_light_timelike">#FFC734</color>
 <color name="orange_dark_timelike">#B28100</color>
 
+<color name="blue_ultra_light_timelike">#763466ff</color>
 <color name="blue_light_timelike">#295EFF</color>
 <color name="blue_medium_timelike">#104BFF</color>
 <color name="blue_dark_timelike">#002CB2</color>
@@ -26,5 +57,7 @@
 <color name="white_textColorPrimary_timelike">#e1f8f8f8</color>
 <color name="black_textColor_timelike">#db535252</color>
 <color name="black_textColorSecondary_timelike">#db9f9e9e</color>
+
+<color name="transparent">#00000000</color>
 
 </resources>
