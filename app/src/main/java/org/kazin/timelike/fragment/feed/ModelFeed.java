@@ -105,8 +105,7 @@ public class ModelFeed {
     }
 
     public void onLikeReceived( String imageid, long timelike){
-        //TODO save to firebase
-        mBackend.saveTimelike(imageid, timelike);
+        mBackend.saveTimelike(imageid, Math.abs(timelike/1000)); //timelike converts to seconds with 1000
     }
 
 

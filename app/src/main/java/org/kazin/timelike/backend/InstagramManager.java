@@ -131,7 +131,7 @@ public class InstagramManager {
                     ImageTimelike imageTimelike = new ImageTimelike(
                             img.getJSONObject("images")
                                     .getJSONObject("standard_resolution").getString("url"),
-                            img.getString("id"), img.getJSONObject("user").getString("username"), img.getJSONObject("likes").getLong("count"),
+                            img.getString("id"), img.getJSONObject("user").getString("username"), 0L,
                             img.getJSONObject("user").getString("profile_picture"), img.getJSONObject("caption").getString("text")
                             , img.getString("type"), comments);
                     feed.add(imageTimelike);

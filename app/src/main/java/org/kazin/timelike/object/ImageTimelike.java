@@ -142,7 +142,7 @@ public class ImageTimelike {
         }
 
         for(int i = 0; i<numberOfComments; i++){
-            commentsString.add("@"+comments.get(i).getUsername()+" "+comments.get(i).getText());
+            commentsString.add("  - "+comments.get(i).getUsername()+" "+comments.get(i).getText());
         }
         return commentsString.toArray(new String[numberOfComments]);
     }

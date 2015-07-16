@@ -77,7 +77,7 @@ public class FragmentFeed extends Fragment{
         private Button thisView;
 
         private int lastMotionEvent;
-
+        long systemtime;
 
         public LikeListener(String imageId, Button thisView) {
             this.imageId = imageId;
@@ -92,11 +92,20 @@ public class FragmentFeed extends Fragment{
                 lastDown = System.currentTimeMillis();
                 showWoble();
             } else {
-                lastDuration = System.currentTimeMillis() - lastDown;
+                systemtime = System.currentTimeMillis();
+                Log.d("apkapk", "Sytem time is: "+systemtime );
+
+                lastDuration = systemtime - lastDown;
+                if (lastDuration<1000||lastDown==0){
+                    return false;
+                }
                 stopWoble();
                 ViewerFeed viewerFeed = ViewerFeed.getInstance(null); //TODO. Can crush here if viewer is not initalized yet. (barely possible)
+
+                Log.d("apkapk", "LastDuration  time is: "+lastDuration +" LastDonw is: "+lastDown);
                 viewerFeed.setTimelike(imageId, lastDuration);
                 viewerFeed.onLikeReceived(imageId, lastDuration);
+                lastDown = System.currentTimeMillis();
             }
             return false;
         }
