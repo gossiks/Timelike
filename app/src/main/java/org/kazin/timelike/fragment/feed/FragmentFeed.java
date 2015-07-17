@@ -8,15 +8,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nineoldandroids.animation.Animator;
 
 import org.kazin.timelike.R;
-import org.kazin.timelike.misc.FeedAdapter2;
+import org.kazin.timelike.misc.EndlessScrollListener;
+import org.kazin.timelike.misc.FeedAdapter;
 import org.kazin.timelike.object.ImageTimelike;
+
+import java.util.ArrayList;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
@@ -52,22 +54,26 @@ public class FragmentFeed extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         mFeedView = (StickyListHeadersListView) rootView.findViewById(R.id.feed_listview);
-
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
         }
         viewer.onLaunch();
+        mFeedView.setOnScrollListener(new EndlessScrollListener(viewer.getEndFeedListener()));
         return rootView;
     }
 
 
 
-    public void setFeedAdapter(FeedAdapter2 adapter){
+    public void setFeedAdapter(FeedAdapter adapter){
         mFeedView.setAdapter(adapter);
     }
 
     public void setTimelike(ImageTimelike timelike) {
-        ((FeedAdapter2)mFeedView.getAdapter()).setTimelike(timelike);
+        ((FeedAdapter)mFeedView.getAdapter()).setTimelike(timelike);
+    }
+
+    public void updateFeed(ArrayList<ImageTimelike> image) {
+        ((FeedAdapter)mFeedView.getAdapter()).addAll(image);
     }
 
     //misc

@@ -42,13 +42,13 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 /**
  * Created by Alexey on 19.06.2015.
  */
-public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer {
+public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer {
 
     private ArrayList<ImageTimelike> mItems;
     private LayoutInflater mInflater;
     private Context mContext;
 
-    public FeedAdapter2(Context context, ArrayList<ImageTimelike> images) {
+    public FeedAdapter(Context context, ArrayList<ImageTimelike> images) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
 
@@ -104,7 +104,7 @@ public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapte
         Picasso.with(mContext).load(image.getImageUrl())
                 .into(holderImage.image);
         //holderImage.description.setText(" @"+image.getUsername() + " " + image.getDescription());
-        setTags(holderImage.description, " @"+image.getUsername() + " " + image.getDescription());
+        setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
 
         if(image.getComments()==null){
 
@@ -178,6 +178,11 @@ public class FeedAdapter2 extends BaseAdapter implements StickyListHeadersAdapte
             }
         }
         notifyDataSetChanged();
+    }
+
+    public void addAll(ArrayList<ImageTimelike> image) {
+        mItems.addAll(image);
+        //notifyDataSetChanged();
     }
 
     //misc for FeedAdapter

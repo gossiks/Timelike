@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.kazin.timelike.backend.BackendManager;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class ModelFeed {
     private static ModelFeed model;
     private PresenterFeed presenter;
     private BackendManager mBackend;
+    private int mLastItemLoaded;
 
     public ModelFeed() {
         mBackend = new BackendManager();
@@ -100,14 +102,59 @@ public class ModelFeed {
         }
     }
 
+    private void loadFeedUpdate(){
+
+        if(mBackend.checkInstLoggedIn()){
+            mBackend.getFeedUpdate(new BackendManager.GetFeedClk() {
+                @Override
+                public void success(ArrayList<ImageTimelike> feed) {
+                    updateFeed(feed);
+                    mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
+                        @Override
+                        public void success(ImageTimelike image) {
+                            setTimelike(image);
+                        }
+
+                        @Override
+                        public void error(String error) {
+                            Log.d("apkapk", "GetFeedTimeLikes error: " + error);
+                        }
+                    });
+                }
+
+                @Override
+                public void error(String error) {
+                    Log.d("apkapk", "Error Logging instagram: " + error);
+                }
+            });
+        }
+    }
+
     public void setTimelike(ImageTimelike image){
         presenter.setTimelike(image);
     }
 
+    public void updateFeed(ArrayList<ImageTimelike> image){
+        presenter.updateFeed(image);
+    }
+
     public void onLikeReceived( String imageid, long timelike){
-        mBackend.saveTimelike(imageid, Math.abs(timelike/1000)); //timelike converts to seconds with 1000
+        mBackend.saveTimelike(imageid, Math.abs(timelike / 1000)); //timelike converts to seconds with 1000
     }
 
 
+    public SimpleCallback getEndFeedListener() {
+        return new SimpleCallback() {
+            @Override
+            public void success(Object object) {
+                //object is current page int
+                loadFeedUpdate();
+            }
 
+            @Override
+            public void fail(Object object) {
+
+            }
+        };
+    }
 }

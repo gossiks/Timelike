@@ -31,6 +31,7 @@ public class InstagramManager {
     private Instagram mInstagram;
     private InstagramSession mInstagramSession;
     private Context mContext;
+    int mLastItemLoaded = 0;
 
 
     private InstagramManager(){
@@ -58,13 +59,47 @@ public class InstagramManager {
 
     public void getFeed(final BackendManager.GetFeedClk callback) {
         List<NameValuePair> params = new ArrayList<>(1);
-        params.add(new BasicNameValuePair("count", "10")); //TODO remember to chang 10
+        params.add(new BasicNameValuePair("count", "40")); //TODO remember to chang 10
+
         InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
         request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
+                    mLastItemLoaded = 40; //TODO remember to extract field
                     callback.success(parseFeed(response));
+                }
+                else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
+    }
+
+    public void getFeedUpdate(final BackendManager.GetFeedClk callback){
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("count", String.valueOf(mLastItemLoaded+40)));
+        //params.add(new BasicNameValuePair("MAX_ID", String.valueOf(mLastItemLoaded)));
+        //params.add(new BasicNameValuePair("max_id", "20"));
+        //params.add(new BasicNameValuePair("min_id", "2"));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response);
+                    //substracting images that already in feed. It is a pity that instagram library cant do this (TODO change lib)
+                    if(imagesParsed.size()>40) {
+                        imagesParsed.subList(mLastItemLoaded, mLastItemLoaded + 40);
+                    }
+                    mLastItemLoaded +=40; // TODO Remember to change
+                    callback.success(imagesParsed);
                 }
                 else {
                     callback.error("empty response");

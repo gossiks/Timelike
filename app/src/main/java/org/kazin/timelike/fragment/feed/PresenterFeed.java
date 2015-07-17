@@ -1,8 +1,7 @@
 package org.kazin.timelike.fragment.feed;
 
-import android.graphics.AvoidXfermode;
-
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 
 import java.util.ArrayList;
 
@@ -54,5 +53,13 @@ public class PresenterFeed {
 
     public void setTimelike(ImageTimelike image) {
         viewer.setTimelike(image);
+    }
+
+    public SimpleCallback getEndFeedListener() {
+        return model.getEndFeedListener();
+    }
+
+    public void updateFeed(ArrayList<ImageTimelike> image) {
+        viewer.updateFeed(image);
     }
 }

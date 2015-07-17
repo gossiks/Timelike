@@ -16,12 +16,12 @@ public class BackendManager {
     private Context mContext;
     public  static BackendManager mManager;
     private FireManager mFireManager2;
-    private InstagramManager mInstagramManager2;
+    private InstagramManager mInstagramManager;
 
     public BackendManager() {
         mContext = TimelikeApp.getContext();
         mFireManager2 = new FireManager();
-        mInstagramManager2 = InstagramManager.getInstance();
+        mInstagramManager = InstagramManager.getInstance();
     }
 
     public static BackendManager getInstance(){
@@ -32,15 +32,19 @@ public class BackendManager {
     }
 
     public void getFeed(GetFeedClk callback){
-        mInstagramManager2.getFeed(callback);
+        mInstagramManager.getFeed(callback);
+    }
+
+    public void getFeedUpdate(GetFeedClk callback){
+        mInstagramManager.getFeedUpdate(callback);
     }
 
     public void LoginInst(LoginInstClk callback){
-        mInstagramManager2.login(callback);
+        mInstagramManager.login(callback);
     }
 
     public boolean checkInstLoggedIn(){
-        return mInstagramManager2.getCurrentUser()!=null;
+        return mInstagramManager.getCurrentUser()!=null;
     }
 
     public void LoginFireAnon(LoginFireAnonClk callback){
