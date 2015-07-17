@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="org.kazin.timelike.fragment.photo.FragmentPhoto">
+
+
+    <net.grobas.view.MovingImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="10dp"
+        app:miv_load_on_create="true"
+        app:miv_max_relative_size="3"
+        app:miv_min_relative_offset="0.2"
+        app:miv_start_delay="0"
+        app:miv_repetitions="-1"
+        app:miv_speed="50"
+        android:layout_alignParentStart="true"
+        android:src="@mipmap/ic_takephoto"
+        android:id="@+id/takephoto_photo_fragment" />
+
+    <TextView
+        android:background="@drawable/abc_ab_share_pack_holo_light"
+        android:textColor="@color/black_textColor_timelike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="TAke phOTO"
+        android:id="@+id/textView"
+        android:layout_alignTop="@+id/takephoto_photo_fragment"
+        android:layout_centerHorizontal="true" />
+
+    <net.grobas.view.MovingImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="10dp"
+        app:miv_load_on_create="true"
+        app:miv_max_relative_size="3"
+        app:miv_min_relative_offset="0.2"
+        app:miv_start_delay="1000"
+        app:miv_repetitions="-1"
+        app:miv_speed="50"
+        android:layout_below="@+id/takephoto_photo_fragment"
+        android:layout_alignParentStart="true"
+        android:src="@mipmap/ic_gallery"
+        android:id="@+id/choosephoto_photo_fragment" />
+
+    <TextView
+        android:background="@drawable/abc_ab_share_pack_holo_light"
+        android:textColor="@color/black_textColor_timelike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Choose phOTO"
+        android:id="@+id/textView2"
+        android:layout_alignTop="@+id/choosephoto_photo_fragment"
+        android:layout_alignEnd="@+id/textView" />
+
+</RelativeLayout>

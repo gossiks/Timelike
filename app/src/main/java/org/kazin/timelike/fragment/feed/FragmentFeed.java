@@ -28,7 +28,9 @@ public class FragmentFeed extends Fragment{
     private static FragmentFeed fragment;
     private ViewerFeed viewer;
 
-    StickyListHeadersListView mFeedView;
+    private static StickyListHeadersListView mFeedView;
+
+
 
     private void setMVP(FragmentFeed fragment){
         viewer = ViewerFeed.getInstance(fragment);
@@ -51,6 +53,9 @@ public class FragmentFeed extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         mFeedView = (StickyListHeadersListView) rootView.findViewById(R.id.feed_listview);
 
+        if(viewer==null){
+            viewer = ViewerFeed.getInstance(fragment);
+        }
         viewer.onLaunch();
         return rootView;
     }
@@ -84,14 +89,22 @@ public class FragmentFeed extends Fragment{
             this.thisView = thisView;
         }
 
+
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+
             lastMotionEvent = event.getAction();
             Log.d("apk", "lastMovionEvent: " + lastMotionEvent);
             if(lastMotionEvent == MotionEvent.ACTION_DOWN) {
                 lastDown = System.currentTimeMillis();
+                v.getParent().requestDisallowInterceptTouchEvent(true); //remember this works only for this amount of parents
+                v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
                 showWoble();
-            } else {
+            } else if(lastMotionEvent!=MotionEvent.ACTION_MOVE){
+                /*if(lastMotionEvent == MotionEvent.ACTION_CANCEL|lastMotionEvent == MotionEvent.ACTION_MOVE){
+                    return false;
+                }*/
                 systemtime = System.currentTimeMillis();
                 Log.d("apkapk", "Sytem time is: "+systemtime );
 
@@ -106,6 +119,8 @@ public class FragmentFeed extends Fragment{
                 viewerFeed.setTimelike(imageId, lastDuration);
                 viewerFeed.onLikeReceived(imageId, lastDuration);
                 lastDown = System.currentTimeMillis();
+                v.getParent().requestDisallowInterceptTouchEvent(false);
+                v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(false);
             }
             return false;
         }
@@ -118,9 +133,13 @@ public class FragmentFeed extends Fragment{
                 }
 
                 @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (lastMotionEvent == MotionEvent.ACTION_DOWN) {
+                public void onAnimationEnd(Animator animation) { //todo clear
+                    if (lastMotionEvent == MotionEvent.ACTION_DOWN|lastMotionEvent==MotionEvent.ACTION_MOVE) {
                         showWoble();
+                    }
+
+                    if(lastMotionEvent==MotionEvent.ACTION_CANCEL|lastMotionEvent==MotionEvent.ACTION_UP){
+                        stopWoble();
                     }
                 }
 

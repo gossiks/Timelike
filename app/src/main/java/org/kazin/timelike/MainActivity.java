@@ -3,6 +3,7 @@ package org.kazin.timelike;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -16,9 +17,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
+
+import com.kbeanie.imagechooser.api.ChooserType;
 
 import org.kazin.timelike.fragment.feed.FragmentFeed;
+import org.kazin.timelike.fragment.photo.FragmentPhoto;
+import org.kazin.timelike.fragment.photo.ViewerPhoto;
 import org.kazin.timelike.misc.Const;
 
 
@@ -144,6 +148,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             switch(position){
                 case Const.FEED_SECTION_MAIN_ACTIVITY:
                     return FragmentFeed.getInstance();
+                case Const.PHOTO_SECTION_MAIN_ACTIVITY:
+                    return FragmentPhoto.getInstance();
                 default:
                     return null;
             }
@@ -152,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public int getCount() {
             // Show 1 total pages.
-            return 1;
+            return 2;
         }
 
         @Override
@@ -162,9 +168,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 case 0:
                     return getString(R.string.feed_title_section).toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return getString(R.string.photo_title_section).toUpperCase(l);
                 case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
+                    return getString(R.string.recent_title_section).toUpperCase(l);
             }
             return null;
         }
@@ -200,6 +206,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK &&
+                (requestCode == ChooserType.REQUEST_PICK_PICTURE||
+                        requestCode == ChooserType.REQUEST_CAPTURE_PICTURE)) {
+            ViewerPhoto.getInstance(null).onImageChosen(requestCode, data);
+
         }
     }
 
