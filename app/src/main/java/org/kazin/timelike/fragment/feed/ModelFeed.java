@@ -103,7 +103,7 @@ public class ModelFeed {
     }
 
     private void loadFeedUpdate(){
-
+/* TODO Temporary silenced because of not working update feed download.
         if(mBackend.checkInstLoggedIn()){
             mBackend.getFeedUpdate(new BackendManager.GetFeedClk() {
                 @Override
@@ -127,7 +127,7 @@ public class ModelFeed {
                     Log.d("apkapk", "Error Logging instagram: " + error);
                 }
             });
-        }
+        }*/
     }
 
     public void setTimelike(ImageTimelike image){

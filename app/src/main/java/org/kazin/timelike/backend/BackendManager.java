@@ -2,6 +2,9 @@ package org.kazin.timelike.backend;
 
 import android.content.Context;
 
+import com.parse.Parse;
+import com.parse.ParseCrashReporting;
+
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.UserTimelike;
@@ -22,6 +25,9 @@ public class BackendManager {
         mContext = TimelikeApp.getContext();
         mFireManager2 = new FireManager();
         mInstagramManager = InstagramManager.getInstance();
+
+
+
     }
 
     public static BackendManager getInstance(){

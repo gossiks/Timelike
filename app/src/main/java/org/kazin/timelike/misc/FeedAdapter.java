@@ -180,9 +180,27 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         notifyDataSetChanged();
     }
 
-    public void addAll(ArrayList<ImageTimelike> image) {
-        mItems.addAll(image);
+    public void addAll(ArrayList<ImageTimelike> images) {
+        for(ImageTimelike addingImage:images){
+            if(containsImage(addingImage,mItems)){
+                mItems.add(addingImage);
+            }
+        }
+        //mItems.addAll(images);
         //notifyDataSetChanged();
+    }
+
+    private boolean containsImage(ImageTimelike imageToLookFor,ArrayList<ImageTimelike> items){
+        String imageId = imageToLookFor.getImageId();
+        boolean contains = false;
+
+        for(ImageTimelike image: items){
+            if(imageId==image.getImageId()){
+                return true;
+            }
+        }
+
+        return contains;
     }
 
     //misc for FeedAdapter

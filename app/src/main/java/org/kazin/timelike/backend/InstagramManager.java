@@ -95,9 +95,6 @@ public class InstagramManager {
 
                     ArrayList<ImageTimelike> imagesParsed = parseFeed(response);
                     //substracting images that already in feed. It is a pity that instagram library cant do this (TODO change lib)
-                    if(imagesParsed.size()>40) {
-                        imagesParsed.subList(mLastItemLoaded, mLastItemLoaded + 40);
-                    }
                     mLastItemLoaded +=40; // TODO Remember to change
                     callback.success(imagesParsed);
                 }
