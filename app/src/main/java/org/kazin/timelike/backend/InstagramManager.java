@@ -81,6 +81,29 @@ public class InstagramManager {
         });
     }
 
+    public void getRecentFeed(final BackendManager.GetFeedClk callback) {
+        List<NameValuePair> params = new ArrayList<>(1);
+        params.add(new BasicNameValuePair("count", "40"));
+
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.recent_feed_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    callback.success(parseFeed(response));
+                }
+                else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
+    }
+
     public void getFeedUpdate(final BackendManager.GetFeedClk callback){
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("count", String.valueOf(mLastItemLoaded+40)));

@@ -3,6 +3,7 @@ package org.kazin.timelike.fragment.feed;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +33,7 @@ public class FragmentFeed extends Fragment{
     private ViewerFeed viewer;
 
     private static StickyListHeadersListView mFeedView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
 
@@ -55,11 +57,21 @@ public class FragmentFeed extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         mFeedView = (StickyListHeadersListView) rootView.findViewById(R.id.feed_listview);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_pull_to_refresh);
+
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
         }
         viewer.onLaunch();
         mFeedView.setOnScrollListener(new EndlessScrollListener(viewer.getEndFeedListener()));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewer.onClickReload();
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike,R.color.blue_medium_timelike);
+
         return rootView;
     }
 
@@ -67,6 +79,7 @@ public class FragmentFeed extends Fragment{
 
     public void setFeedAdapter(FeedAdapter adapter){
         mFeedView.setAdapter(adapter);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public void setTimelike(ImageTimelike timelike) {

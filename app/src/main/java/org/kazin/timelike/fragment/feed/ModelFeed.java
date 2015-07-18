@@ -157,4 +157,11 @@ public class ModelFeed {
             }
         };
     }
+
+    public BackendManager getBackend() {
+        if(mBackend == null){
+            mBackend = BackendManager.getInstance();
+        }
+        return mBackend;
+    }
 }

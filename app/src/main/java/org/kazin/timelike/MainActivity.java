@@ -23,6 +23,7 @@ import com.kbeanie.imagechooser.api.ChooserType;
 import org.kazin.timelike.fragment.feed.FragmentFeed;
 import org.kazin.timelike.fragment.photo.FragmentPhoto;
 import org.kazin.timelike.fragment.photo.ViewerPhoto;
+import org.kazin.timelike.fragment.recent.FragmentRecent;
 import org.kazin.timelike.misc.Const;
 
 
@@ -150,6 +151,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return FragmentFeed.getInstance();
                 case Const.PHOTO_SECTION_MAIN_ACTIVITY:
                     return FragmentPhoto.getInstance();
+                /*case Const.RECENT_SECTION_MAIN_ACTIVITY:
+                    return FragmentRecent.getInstance();*/
                 default:
                     return null;
             }
@@ -157,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            // Show 1 total pages.
+
             return 2;
         }
 

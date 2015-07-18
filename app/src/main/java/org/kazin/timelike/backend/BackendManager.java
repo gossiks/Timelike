@@ -41,6 +41,10 @@ public class BackendManager {
         mInstagramManager.getFeed(callback);
     }
 
+    public void getRecentFeed(GetFeedClk callback){
+        mInstagramManager.getRecentFeed(callback);
+    }
+
     public void getFeedUpdate(GetFeedClk callback){
         mInstagramManager.getFeedUpdate(callback);
     }

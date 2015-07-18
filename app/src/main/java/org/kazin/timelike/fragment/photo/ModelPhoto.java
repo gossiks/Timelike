@@ -11,6 +11,7 @@ import com.kbeanie.imagechooser.api.ImageChooserListener;
 import com.kbeanie.imagechooser.api.ImageChooserManager;
 
 import org.kazin.timelike.MainActivity;
+import org.kazin.timelike.backend.BackendManager;
 import org.kazin.timelike.misc.TimelikeApp;
 
 import java.io.File;
@@ -64,6 +65,7 @@ public class ModelPhoto {
     public void onImageChosen(int requestCode, Intent data) {
         mImageChooserManager.submit(requestCode, data);
     }
+
 
     private class ImageChooserLstn implements ImageChooserListener{
         //interface ImageChooserListener
