@@ -17,7 +17,7 @@ public class ModelFeed {
     private static ModelFeed model;
     private PresenterFeed presenter;
     private BackendManager mBackend;
-    private int mLastItemLoaded;
+    private ArrayList<ImageTimelike> mFeedLastState;
 
     public ModelFeed() {
         mBackend = new BackendManager();
@@ -40,21 +40,26 @@ public class ModelFeed {
 
     public void onLaunch() {
         mBackend = BackendManager.getInstance();
-        loadFeed();
+        loadFeed(false);
     }
 
     public void onClickReload(){
-        loadFeed();
+        loadFeed(true);
     }
 
     //misc
 
-    private void loadFeed(){
+    private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
+            if(mFeedLastState!=null & !reload){
+                presenter.setFeed(mFeedLastState);
+                return;
+            }
             Log.d("apkapk","Instagram is logged!");
             mBackend.getFeed(new BackendManager.GetFeedClk() {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {
+                    mFeedLastState = feed;
                     presenter.setFeed(feed);
                     mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
                         @Override
@@ -80,7 +85,7 @@ public class ModelFeed {
                 @Override
                 public void success(UserTimelike user) {
                     Log.d("apkapk","InstUser logged in: "+user.username);
-                    loadFeed();
+                    loadFeed(false);
                 }
 
                 @Override

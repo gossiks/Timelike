@@ -183,11 +183,20 @@ public class InstagramManager {
                 for (int i = 0; i < length; i++) {
                     JSONObject img = jsonData.getJSONObject(i);
                     ArrayList<ImageTimelike.Comment> comments =  parseComments(img.getJSONObject("comments"));
+
+                    String caption;
+                    try{
+                        caption = img.getJSONObject("caption").getString("text");
+                    } catch (JSONException error){
+                        caption = "";
+                    }
+
+
                     ImageTimelike imageTimelike = new ImageTimelike(
                             img.getJSONObject("images")
                                     .getJSONObject("standard_resolution").getString("url"),
                             img.getString("id"), img.getJSONObject("user").getString("username"), 0L,
-                            img.getJSONObject("user").getString("profile_picture"), img.getJSONObject("caption").getString("text")
+                            img.getJSONObject("user").getString("profile_picture"), caption
                             , img.getString("type"), comments);
                     feed.add(imageTimelike);
                 }
@@ -217,4 +226,7 @@ public class InstagramManager {
     }
 
 
+    public void logOff() {
+        mInstagramSession.reset();
+    }
 }

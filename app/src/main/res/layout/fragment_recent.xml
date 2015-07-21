@@ -4,21 +4,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <View style="@style/TimelikeTheme.Divider" />
 
-    <com.joooonho.SelectableRoundedImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/avatar_user_item_fragment_recent"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher"
 
-        app:sriv_left_top_corner_radius="16dip"
-        app:sriv_right_top_corner_radius="0dip"
-        app:sriv_left_bottom_corner_radius="48dip"
-        app:sriv_right_bottom_corner_radius="16dip"
-        app:sriv_border_width="1dip"
-        app:sriv_border_color="@color/blue_medium_timelike"
-        app:sriv_oval="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,12 +31,34 @@
         android:layout_below="@+id/username_item_user_fragment_recent"
         android:layout_alignParentEnd="true" />
 
-    <ListView
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/recent_feed_fragment_fragment_recent"
-        android:layout_below="@+id/button"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/recent_pull_to_refresh"
+        android:layout_below="@+id/log_off_fragment_recent"
+        android:layout_alignParentStart="true"
+        >
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/recent_feed_fragment_fragment_recent"
+           />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
+    <com.joooonho.SelectableRoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar_user_item_fragment_recent"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"
+
+        app:sriv_left_top_corner_radius="16dip"
+        app:sriv_right_top_corner_radius="0dip"
+        app:sriv_left_bottom_corner_radius="48dip"
+        app:sriv_right_bottom_corner_radius="16dip"
+        app:sriv_border_width="1dip"
+        app:sriv_border_color="@color/blue_medium_timelike"
+        app:sriv_oval="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

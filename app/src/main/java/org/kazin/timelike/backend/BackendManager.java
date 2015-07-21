@@ -73,6 +73,10 @@ public class BackendManager {
         mFireManager2.saveTimelike(imageid, timelike);
     }
 
+    public void logOff() {
+        mInstagramManager.logOff();
+    }
+
     //misc for other
 
     public interface LoginInstClk{

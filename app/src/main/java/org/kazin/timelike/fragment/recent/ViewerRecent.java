@@ -42,10 +42,20 @@ public class ViewerRecent {
     }
 
     public void setRecentFeed(ArrayList<ImageTimelike> images) {
-        ((FragmentRecent)fragment).setRecentFeed(new RecentAdapter(images));
+        ((FragmentRecent)fragment).setAvatar(images.get(0).getAvatarUrl());
+        ((FragmentRecent)fragment).setUsername(images.get(0).getUsername());
+        ((FragmentRecent) fragment).setRecentFeed(new RecentAdapter(images));
     }
 
     public void setTimelike(ImageTimelike image) {
         ((FragmentRecent)fragment).setTimelike(image);
+    }
+
+    public void onClickReload() {
+        presenter.onClickReload();
+    }
+
+    public void onClickLogOff() {
+        presenter.onClickLogOff();
     }
 }

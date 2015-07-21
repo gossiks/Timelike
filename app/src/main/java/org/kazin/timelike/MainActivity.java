@@ -95,6 +95,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return mainActivity;
     }
 
+    public void setFirstTab(){
+        mViewPager.setCurrentItem(0);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -151,8 +155,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return FragmentFeed.getInstance();
                 case Const.PHOTO_SECTION_MAIN_ACTIVITY:
                     return FragmentPhoto.getInstance();
-                /*case Const.RECENT_SECTION_MAIN_ACTIVITY:
-                    return FragmentRecent.getInstance();*/
+                case Const.RECENT_SECTION_MAIN_ACTIVITY:
+                    return FragmentRecent.getInstance();
                 default:
                     return null;
             }
@@ -161,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public int getCount() {
 
-            return 2;
+            return 3;
         }
 
         @Override

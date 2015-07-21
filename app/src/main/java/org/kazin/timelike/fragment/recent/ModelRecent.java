@@ -30,6 +30,8 @@ public class ModelRecent {
 
     private BackendManager mBackend;
 
+    private ArrayList<ImageTimelike> mFeedLastState;
+
     private ModelRecent(){
         mBackend = ModelFeed.getInstance(null).getBackend();
     }
@@ -47,15 +49,24 @@ public class ModelRecent {
     }
 
     public void onLaunch() {
-        loadFeed();
+        loadFeed(false);
     }
 
-    private void loadFeed(){
+    public void onClickReload() {
+        loadFeed(true);
+    }
+
+    private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
-            Log.d("apkapk","Instagram is logged!");
+
+            if(mFeedLastState!=null & !reload){
+                presenter.setRecentFeed(mFeedLastState);
+                return;
+            }
             mBackend.getRecentFeed(new BackendManager.GetFeedClk() {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {
+                    mFeedLastState = feed;
                     presenter.setRecentFeed(feed);
                     mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
                         @Override
@@ -65,14 +76,14 @@ public class ModelRecent {
 
                         @Override
                         public void error(String error) {
-                            Log.d("apkapk", "GetFeedTimeLikes error: "+error);
+                            Log.d("apkapk", "GetFeedTimeLikes error: " + error);
                         }
                     });
                 }
 
                 @Override
                 public void error(String error) {
-                    Log.d("apkapk","Error Logging instagram: "+error);
+                    Log.d("apkapk", "Error Logging instagram: " + error);
                 }
             });
         }
@@ -80,5 +91,11 @@ public class ModelRecent {
 
     public void setTimelike(ImageTimelike image){
         presenter.setTimelike(image);
+    }
+
+
+    public void onClickLogOff() {
+        mBackend.logOff();
+        ((MainActivity)MainActivity.getMainActivity()).setFirstTab();
     }
 }
