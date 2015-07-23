@@ -20,6 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.deser.Deserializers;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
@@ -38,10 +42,24 @@ public class RecentAdapter extends BaseAdapter{
     private LayoutInflater mInflater;
     private Context mContext;
 
+    private final ImageLoader mImageLoader;
+    private final DisplayImageOptions mImageOptions;
+
     public RecentAdapter(ArrayList<ImageTimelike> images) {
         mContext = TimelikeApp.getContext();
         mInflater = LayoutInflater.from(mContext);
         mItems = images;
+
+        if(!ImageLoader.getInstance().isInited()){
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
+            ImageLoader.getInstance().init(config);
+        }
+
+        mImageLoader = ImageLoader.getInstance();
+
+        mImageOptions = new DisplayImageOptions.Builder()
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).build();
+
 
     }
 
@@ -83,9 +101,8 @@ public class RecentAdapter extends BaseAdapter{
 
         holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button));
 
-        Picasso.with(mContext).load(image.getImageUrl())
-                .into(holderImage.image);
-        //holderImage.description.setText(" @"+image.getUsername() + " " + image.getDescription());
+        mImageLoader.displayImage(image.getImageUrl(), holderImage.image, mImageOptions);
+
         setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
 
         if(image.getComments()==null){

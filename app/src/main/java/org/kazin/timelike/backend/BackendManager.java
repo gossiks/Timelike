@@ -61,7 +61,7 @@ public class BackendManager {
         mFireManager2.loginAnon(callback);
     }
 
-    public void getFeedTimeLikes(ArrayList<ImageTimelike> images, GetFeedTimelikes callback){
+    synchronized public void getFeedTimeLikes(ArrayList<ImageTimelike> images, GetFeedTimelikes callback){
         ArrayList<String> imageIds = new ArrayList<>(images.size());
         for(ImageTimelike image:images){
             imageIds.add(image.getImageId());

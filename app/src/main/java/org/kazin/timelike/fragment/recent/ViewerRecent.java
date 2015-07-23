@@ -1,11 +1,11 @@
 package org.kazin.timelike.fragment.recent;
 
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
-import org.kazin.timelike.fragment.photo.FragmentPhoto;
-import org.kazin.timelike.misc.RecentAdapter;
+import org.kazin.timelike.misc.RecentAdapter2;
+import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 
 import java.util.ArrayList;
@@ -16,24 +16,30 @@ import java.util.ArrayList;
 public class ViewerRecent {
     private static ViewerRecent viewer;
     private PresenterRecent presenter;
-    private Fragment fragment;
+    private static Fragment mFragment;
 
     private void setMVP(FragmentRecent fragment, ViewerRecent viewer){
-        this.fragment = fragment;
+        this.mFragment = fragment;
         presenter = PresenterRecent.getInstance(viewer);
     }
 
     public static ViewerRecent getInstance(FragmentRecent fragment){
-        if(viewer==null){
+        Log.d("apkapk", "mFragmetn: "+mFragment+" fragment: "+fragment);
+
+
+        if(viewer==null|mFragment != fragment){
             viewer = new ViewerRecent();
             viewer.setMVP(fragment, viewer);
         }
         return viewer;
     }
 
+    public static ViewerRecent getInstance() {
+        return viewer;
+    }
 
     public Fragment getFragmentContext() {
-        return fragment;
+        return mFragment;
     }
 
 
@@ -42,13 +48,13 @@ public class ViewerRecent {
     }
 
     public void setRecentFeed(ArrayList<ImageTimelike> images) {
-        ((FragmentRecent)fragment).setAvatar(images.get(0).getAvatarUrl());
-        ((FragmentRecent)fragment).setUsername(images.get(0).getUsername());
-        ((FragmentRecent) fragment).setRecentFeed(new RecentAdapter(images));
+        ((FragmentRecent) mFragment).setAvatar(images.get(0).getAvatarUrl());
+        ((FragmentRecent) mFragment).setUsername(images.get(0).getUsername());
+        ((FragmentRecent) mFragment).setRecentFeed(new RecentAdapter2(TimelikeApp.getContext(), images));
     }
 
     public void setTimelike(ImageTimelike image) {
-        ((FragmentRecent)fragment).setTimelike(image);
+        ((FragmentRecent) mFragment).setTimelike(image);
     }
 
     public void onClickReload() {
@@ -57,5 +63,11 @@ public class ViewerRecent {
 
     public void onClickLogOff() {
         presenter.onClickLogOff();
+    }
+
+    public void setRecentFeedAdapterOld(ArrayList<ImageTimelike> images) {
+        ((FragmentRecent) mFragment).setAvatar(images.get(0).getAvatarUrl());
+        ((FragmentRecent) mFragment).setUsername(images.get(0).getUsername());
+        ((FragmentRecent) mFragment).setRecentFeedAdapterOld();
     }
 }

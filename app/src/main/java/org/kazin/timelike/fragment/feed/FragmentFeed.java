@@ -69,7 +69,7 @@ public class FragmentFeed extends Fragment{
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike,R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike, R.color.blue_medium_timelike);
 
         return rootView;
     }
@@ -81,13 +81,22 @@ public class FragmentFeed extends Fragment{
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    public void setTimelike(ImageTimelike timelike) {
-        ((FeedAdapter)mFeedView.getAdapter()).setTimelike(timelike);
+    public void setTimelike(ImageTimelike image) {
+        ((FeedAdapter)mFeedView.getAdapter()).setTimelike(image);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void addTimelike(ImageTimelike image) {
+        ((FeedAdapter)mFeedView.getAdapter()).addTimelike(image);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public void updateFeed(ArrayList<ImageTimelike> image) {
         ((FeedAdapter)mFeedView.getAdapter()).addAll(image);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
+
+
 
     //misc
 
@@ -128,8 +137,11 @@ public class FragmentFeed extends Fragment{
                 Log.d("apkapk", "Sytem time is: "+systemtime );
 
                 lastDuration = systemtime - lastDown;
-                if (lastDuration<1000||lastDown==0){
+                if (lastDown==0){
                     return false;
+                }
+                if(lastDuration<1000){
+                    lastDuration = 1000;
                 }
                 stopWoble();
                 ViewerFeed viewerFeed = ViewerFeed.getInstance(null); //TODO. Can crush here if viewer is not initalized yet. (barely possible)
@@ -153,11 +165,11 @@ public class FragmentFeed extends Fragment{
 
                 @Override
                 public void onAnimationEnd(Animator animation) { //todo clear
-                    if (lastMotionEvent == MotionEvent.ACTION_DOWN|lastMotionEvent==MotionEvent.ACTION_MOVE) {
+                    if (lastMotionEvent == MotionEvent.ACTION_DOWN | lastMotionEvent == MotionEvent.ACTION_MOVE) {
                         showWoble();
                     }
 
-                    if(lastMotionEvent==MotionEvent.ACTION_CANCEL|lastMotionEvent==MotionEvent.ACTION_UP){
+                    if (lastMotionEvent == MotionEvent.ACTION_CANCEL | lastMotionEvent == MotionEvent.ACTION_UP) {
                         stopWoble();
                     }
                 }

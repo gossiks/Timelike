@@ -9,13 +9,11 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -23,19 +21,18 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.joooonho.SelectableRoundedImageView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
-
-import net.londatiga.android.instagram.util.StringUtil;
 
 import org.kazin.timelike.R;
 import org.kazin.timelike.fragment.feed.FragmentFeed;
 import org.kazin.timelike.object.ImageTimelike;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -47,6 +44,8 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     private ArrayList<ImageTimelike> mItems;
     private LayoutInflater mInflater;
     private Context mContext;
+    private final ImageLoader mImageLoader;
+    private final DisplayImageOptions mImageOptions;
 
     public FeedAdapter(Context context, ArrayList<ImageTimelike> images) {
         mInflater = LayoutInflater.from(context);
@@ -60,6 +59,17 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             items.add(tempImage);
         }
         mItems = items;*/
+
+        if(!ImageLoader.getInstance().isInited()){
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
+            ImageLoader.getInstance().init(config);
+        }
+
+        mImageLoader = ImageLoader.getInstance();
+
+        mImageOptions = new DisplayImageOptions.Builder()
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).build();
+
         mItems = images;
     }
 
@@ -101,9 +111,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
         holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button));
 
-        Picasso.with(mContext).load(image.getImageUrl())
-                .into(holderImage.image);
-        //holderImage.description.setText(" @"+image.getUsername() + " " + image.getDescription());
+        mImageLoader.displayImage(image.getImageUrl(), holderImage.image, mImageOptions);
         setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
 
         if(image.getComments()==null){
@@ -140,7 +148,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         }
 
         ImageTimelike user = mItems.get(position);
-        Picasso.with(mContext).load(user.getAvatarUrl()).into(holderHeader.avatar);
+        Picasso.with(mContext).load(user.getAvatarUrl()).into(holderHeader.avatar);// Faster than universal image loader. Here. Suprisingly.
         holderHeader.username.setText(user.getUsername());
 
         return convertView;
@@ -179,6 +187,19 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         }
         notifyDataSetChanged();
     }
+
+    public void addTimelike(ImageTimelike imageTimelike){
+        String imageId = imageTimelike.getImageId();
+        long timelike = imageTimelike.getTimelike();
+        for(ImageTimelike image: mItems){
+            if(image.getImageId().equals(imageId)){
+
+                image.setTimelike(image.getTimelike()+ timelike);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 
     public void addAll(ArrayList<ImageTimelike> images) {
         for(ImageTimelike addingImage:images){
@@ -257,7 +278,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
     //miscmisc
 
-    private String convertToHumanLook(long timelike1){
+    public String convertToHumanLook(long timelike1){
         String timelikeCrop = null;
         double timelike = (double)timelike1;
         DecimalFormat noDigit = new DecimalFormat("#");
@@ -301,7 +322,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
 
 
-    private void setTags(TextView pTextView, String pTagString) {
+    public void setTags(TextView pTextView, String pTagString) {
         SpannableString string = new SpannableString(pTagString);
 
         int start = -1;
@@ -369,4 +390,25 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         pTextView.setText(string);
     }
 
+    //misc getters
+
+    public ArrayList<ImageTimelike> getItems() {
+        return mItems;
+    }
+
+    public LayoutInflater getInflater() {
+        return mInflater;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+
+    public DisplayImageOptions getImageOptions() {
+        return mImageOptions;
+    }
 }

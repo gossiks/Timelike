@@ -1,22 +1,12 @@
 package org.kazin.timelike.fragment.recent;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
-
-import com.kbeanie.imagechooser.api.ChooserType;
-import com.kbeanie.imagechooser.api.ChosenImage;
-import com.kbeanie.imagechooser.api.ImageChooserListener;
-import com.kbeanie.imagechooser.api.ImageChooserManager;
 
 import org.kazin.timelike.MainActivity;
 import org.kazin.timelike.backend.BackendManager;
-import org.kazin.timelike.fragment.feed.ModelFeed;
-import org.kazin.timelike.fragment.photo.ModelPhoto;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.UserTimelike;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -26,14 +16,13 @@ public class ModelRecent {
 
     private static ModelRecent model;
     private PresenterRecent presenter;
-    private ImageChooserManager mImageChooserManager;
 
     private BackendManager mBackend;
 
     private ArrayList<ImageTimelike> mFeedLastState;
 
     private ModelRecent(){
-        mBackend = ModelFeed.getInstance(null).getBackend();
+        mBackend = BackendManager.getInstance();
     }
 
     private void setMVP(PresenterRecent presenter){
@@ -49,6 +38,7 @@ public class ModelRecent {
     }
 
     public void onLaunch() {
+        mBackend = BackendManager.getInstance();
         loadFeed(false);
     }
 
@@ -58,8 +48,7 @@ public class ModelRecent {
 
     private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
-
-            if(mFeedLastState!=null & !reload){
+            if(mFeedLastState!=null && !reload){
                 presenter.setRecentFeed(mFeedLastState);
                 return;
             }
@@ -84,6 +73,31 @@ public class ModelRecent {
                 @Override
                 public void error(String error) {
                     Log.d("apkapk", "Error Logging instagram: " + error);
+                }
+            });
+        }
+        else {
+            mBackend.LoginInst(new BackendManager.LoginInstClk() {
+                @Override
+                public void success(UserTimelike user) {
+                    Log.d("apkapk","InstUser logged in: "+user.username);
+                    loadFeed(false);
+                }
+
+                @Override
+                public void error(String error) {
+                    Log.d("apkapk", "Error logging "+error);
+                }
+            });
+            mBackend.LoginFireAnon(new BackendManager.LoginFireAnonClk() {
+                @Override
+                public void success() {
+                    Log.d("apkapk", "FireBase Loggedin anono successfully");
+                }
+
+                @Override
+                public void error(String error) {
+                    Log.d("apkapk", "FireBase login Anon error: " + error);
                 }
             });
         }

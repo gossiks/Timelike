@@ -3,6 +3,7 @@ package org.kazin.timelike.fragment.feed;
 import android.util.Log;
 
 import org.kazin.timelike.backend.BackendManager;
+import org.kazin.timelike.fragment.recent.PresenterRecent;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
@@ -15,7 +16,8 @@ import java.util.ArrayList;
 public class ModelFeed {
 
     private static ModelFeed model;
-    private PresenterFeed presenter;
+    private PresenterFeed presenterFeed;
+
     private BackendManager mBackend;
     private ArrayList<ImageTimelike> mFeedLastState;
 
@@ -23,20 +25,25 @@ public class ModelFeed {
         mBackend = new BackendManager();
     }
 
-    private void setMVP(PresenterFeed presenter){
-        this.presenter = presenter;
+    private void setFeedPresenter(PresenterFeed presenter){
+        if(presenterFeed==null){
+            this.presenterFeed = presenter;
+        }
     }
+
 
     public static ModelFeed getInstance(PresenterFeed presenter) {
         if(model == null){
             model = new ModelFeed();
-            model.setMVP(presenter);
+            model.setFeedPresenter(presenter);
             return model;
         }
         else{
+            model.setFeedPresenter(presenter);
             return model;
         }
     }
+
 
     public void onLaunch() {
         mBackend = BackendManager.getInstance();
@@ -52,7 +59,7 @@ public class ModelFeed {
     private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
             if(mFeedLastState!=null & !reload){
-                presenter.setFeed(mFeedLastState);
+                presenterFeed.setFeed(mFeedLastState);
                 return;
             }
             Log.d("apkapk","Instagram is logged!");
@@ -60,7 +67,7 @@ public class ModelFeed {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {
                     mFeedLastState = feed;
-                    presenter.setFeed(feed);
+                    presenterFeed.setFeed(feed);
                     mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
                         @Override
                         public void success(ImageTimelike image) {
@@ -136,11 +143,11 @@ public class ModelFeed {
     }
 
     public void setTimelike(ImageTimelike image){
-        presenter.setTimelike(image);
+        presenterFeed.setTimelike(image);
     }
 
     public void updateFeed(ArrayList<ImageTimelike> image){
-        presenter.updateFeed(image);
+        presenterFeed.updateFeed(image);
     }
 
     public void onLikeReceived( String imageid, long timelike){
@@ -169,4 +176,6 @@ public class ModelFeed {
         }
         return mBackend;
     }
+
+
 }

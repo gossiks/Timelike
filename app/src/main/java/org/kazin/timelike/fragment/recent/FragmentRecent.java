@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,8 +22,11 @@ import net.grobas.view.MovingImageView;
 import org.kazin.timelike.R;
 import org.kazin.timelike.fragment.photo.ViewerPhoto;
 import org.kazin.timelike.misc.RecentAdapter;
+import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
 public class FragmentRecent extends Fragment  {
@@ -31,15 +36,17 @@ public class FragmentRecent extends Fragment  {
    private static FragmentRecent fragment;
    private ViewerRecent viewer;
 
-   private Context mContext;
+   private Context mContext = TimelikeApp.getContext();
 
    private SelectableRoundedImageView mAvatar;
    private TextView mUsername;
    private ListView mRecent;
 
    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecentAdapter2 mRecentAdapter;
+    private View mConvertView;
 
-   private void setMVP(FragmentRecent fragment){
+    private void setMVP(FragmentRecent fragment){
        viewer = ViewerRecent.getInstance(fragment);
    }
 
@@ -47,13 +54,13 @@ public class FragmentRecent extends Fragment  {
        if(fragment == null){
            fragment = new FragmentRecent();
            fragment.setMVP(fragment);
+           return fragment;
+       } else {
+           return fragment;
        }
-       return fragment;
    }
 
-    public FragmentRecent() {
-        mContext = TimelikeApp.getContext();
-    }
+
 
 
     @Override
@@ -66,10 +73,6 @@ public class FragmentRecent extends Fragment  {
         mUsername = (TextView) convertView.findViewById(R.id.username_item_user_fragment_recent);
         mSwipeRefreshLayout = (SwipeRefreshLayout) convertView.findViewById(R.id.recent_pull_to_refresh);
         Button logOffButton = (Button) convertView.findViewById(R.id.log_off_fragment_recent);
-
-        if(viewer==null){
-            viewer = ViewerRecent.getInstance(fragment);
-        }
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -86,9 +89,21 @@ public class FragmentRecent extends Fragment  {
             }
         });
 
-        viewer.onLaunch();
+
+        mConvertView = convertView;
 
         return convertView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(viewer==null){
+            viewer = ViewerRecent.getInstance(this);
+        }
+        viewer.onLaunch();
     }
 
     public void setAvatar(String url) {
@@ -99,13 +114,20 @@ public class FragmentRecent extends Fragment  {
         mUsername.setText(username);
     }
 
-    public void setRecentFeed(RecentAdapter adapter){
+    public void setRecentFeed(RecentAdapter2 adapter){
+        mRecentAdapter = adapter;
         mRecent.setAdapter(adapter);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
+    public void setRecentFeedAdapterOld(){
+        mRecent.setAdapter(mRecentAdapter);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
     public void setTimelike(ImageTimelike image) {
-        ((RecentAdapter)mRecent.getAdapter()).setTimelike(image);
+        ((RecentAdapter2)mRecent.getAdapter()).setTimelike(image);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     //misc
