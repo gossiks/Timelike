@@ -1,6 +1,7 @@
 package org.kazin.timelike.backend;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.londatiga.android.instagram.Instagram;
 import net.londatiga.android.instagram.InstagramRequest;
@@ -28,10 +29,13 @@ import java.util.List;
 public class InstagramManager {
 
     private static InstagramManager manager;
+    private final int FEED_INDENTIFIER = 0;
+    private final int RECENT_INDENTIFIER = 1;
     private Instagram mInstagram;
     private InstagramSession mInstagramSession;
     private Context mContext;
-    int mLastItemLoaded = 0;
+    String mNextMaxImageIdFeed;
+    String mNextMaxImageIdRecent;
 
 
     private InstagramManager(){
@@ -59,15 +63,15 @@ public class InstagramManager {
 
     public void getFeed(final BackendManager.GetFeedClk callback) {
         List<NameValuePair> params = new ArrayList<>(1);
-        params.add(new BasicNameValuePair("count", "40")); //TODO remember to chang 10
+        params.add(new BasicNameValuePair("count", "40"));
 
         InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
         request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
-                    mLastItemLoaded = 40; //TODO remember to extract field
-                    callback.success(parseFeed(response));
+
+                    callback.success(parseFeed(response,FEED_INDENTIFIER));
                 }
                 else {
                     callback.error("empty response");
@@ -83,14 +87,14 @@ public class InstagramManager {
 
     public void getRecentFeed(final BackendManager.GetFeedClk callback) {
         List<NameValuePair> params = new ArrayList<>(1);
-        params.add(new BasicNameValuePair("count", "40"));
+        params.add(new BasicNameValuePair("count", "10"));
 
         InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
         request.createRequest("GET", mContext.getString(R.string.recent_feed_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
-                    callback.success(parseFeed(response));
+                    callback.success(parseFeed(response, RECENT_INDENTIFIER));
                 }
                 else {
                     callback.error("empty response");
@@ -106,22 +110,17 @@ public class InstagramManager {
 
     public void getFeedUpdate(final BackendManager.GetFeedClk callback){
         List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("count", String.valueOf(mLastItemLoaded+40)));
-        //params.add(new BasicNameValuePair("MAX_ID", String.valueOf(mLastItemLoaded)));
-        //params.add(new BasicNameValuePair("max_id", "20"));
-        //params.add(new BasicNameValuePair("min_id", "2"));
+        params.add(new BasicNameValuePair("count", "20"));
+        params.add(new BasicNameValuePair("max_id", mNextMaxImageIdFeed));
         InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
         request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
 
-                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response);
-                    //substracting images that already in feed. It is a pity that instagram library cant do this (TODO change lib)
-                    mLastItemLoaded +=40; // TODO Remember to change
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_INDENTIFIER);
                     callback.success(imagesParsed);
-                }
-                else {
+                } else {
                     callback.error("empty response");
                 }
             }
@@ -132,6 +131,64 @@ public class InstagramManager {
             }
         });
     }
+
+    public void getRecentUpdate(final BackendManager.GetFeedClk callback){
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("count", "20"));
+        params.add(new BasicNameValuePair("max_id", mNextMaxImageIdRecent));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, RECENT_INDENTIFIER);
+                    callback.success(imagesParsed);
+                } else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
+    }
+
+    //fortest
+    public void testUpdateFeed(){
+        getFeedUpdateTEST(0);
+        getFeedUpdateTEST(5);
+        getFeedUpdateTEST(10);
+    }
+
+
+    public void getFeedUpdateTEST(int startItem){
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("max_id",String.valueOf(startItem)));
+        params.add(new BasicNameValuePair("count", String.valueOf(10)));
+
+        //params.add(new BasicNameValuePair("MIN_ID", String.valueOf(startItem)));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_INDENTIFIER);
+                    Log.d("apkapkTest", "response is: 1st - " + imagesParsed.get(0).getImageId() + ". 2nd - " + imagesParsed.get(1).getImageId());
+                } else {
+                    Log.d("apkapkTest", "empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d("apkapkTest", "error request");
+            }
+        });
+    }
+
 
     public void login(final BackendManager.LoginInstClk callback) {
         mInstagram.authorize(new Instagram.InstagramAuthListener() {
@@ -172,10 +229,15 @@ public class InstagramManager {
 
 
     //misc methods
-    private ArrayList<ImageTimelike> parseFeed(String response){
+
+    private ArrayList<ImageTimelike> parseFeed(String response, int nextId){
         ArrayList<ImageTimelike> feed = new ArrayList<>();
         try {
             JSONObject json = (JSONObject) new JSONTokener(response).nextValue();
+
+            JSONObject paginationData = json.getJSONObject("pagination");
+            setNextId(nextId, paginationData.getString("next_max_id"));
+
             JSONArray jsonData = json.getJSONArray("data");
             int length = jsonData.length();
             if (length > 0) {
@@ -207,6 +269,20 @@ public class InstagramManager {
 
 
         return feed;
+    }
+
+
+    private void setNextId(int type, String nextMaxId){
+        switch (type){
+            case(FEED_INDENTIFIER):
+                mNextMaxImageIdFeed = nextMaxId;
+                break;
+            case(RECENT_INDENTIFIER):
+                mNextMaxImageIdRecent = nextMaxId;
+                break;
+            default:
+                break;
+        }
     }
 
     private ArrayList<ImageTimelike.Comment> parseComments(JSONObject json) throws JSONException {

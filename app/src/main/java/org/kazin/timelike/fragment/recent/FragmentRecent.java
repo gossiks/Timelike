@@ -26,6 +26,8 @@ import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 
+import java.util.ArrayList;
+
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
@@ -127,6 +129,11 @@ public class FragmentRecent extends Fragment  {
 
     public void setTimelike(ImageTimelike image) {
         ((RecentAdapter2)mRecent.getAdapter()).setTimelike(image);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void updateFeed(ArrayList<ImageTimelike> image) {
+        ((RecentAdapter2)mRecent.getAdapter()).addAll(image);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 

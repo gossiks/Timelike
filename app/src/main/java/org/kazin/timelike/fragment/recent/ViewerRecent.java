@@ -24,7 +24,7 @@ public class ViewerRecent {
     }
 
     public static ViewerRecent getInstance(FragmentRecent fragment){
-        Log.d("apkapk", "mFragmetn: "+mFragment+" fragment: "+fragment);
+        Log.d("apkapk", "mFragmetn: " + mFragment + " fragment: " + fragment);
 
 
         if(viewer==null|mFragment != fragment){
@@ -69,5 +69,9 @@ public class ViewerRecent {
         ((FragmentRecent) mFragment).setAvatar(images.get(0).getAvatarUrl());
         ((FragmentRecent) mFragment).setUsername(images.get(0).getUsername());
         ((FragmentRecent) mFragment).setRecentFeedAdapterOld();
+    }
+
+    public void updateFeed(ArrayList<ImageTimelike> image) {
+        ((FragmentRecent) mFragment).updateFeed(image);
     }
 }

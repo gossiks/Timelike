@@ -203,7 +203,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
     public void addAll(ArrayList<ImageTimelike> images) {
         for(ImageTimelike addingImage:images){
-            if(containsImage(addingImage,mItems)){
+            if(!containsImage(addingImage,mItems)){
                 mItems.add(addingImage);
             }
         }

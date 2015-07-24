@@ -128,6 +128,7 @@ public class FragmentFeed extends Fragment{
                 lastDown = System.currentTimeMillis();
                 v.getParent().requestDisallowInterceptTouchEvent(true); //remember this works only for this amount of parents
                 v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
+                stopWoble();
                 showWoble();
             } else if(lastMotionEvent!=MotionEvent.ACTION_MOVE){
                 /*if(lastMotionEvent == MotionEvent.ACTION_CANCEL|lastMotionEvent == MotionEvent.ACTION_MOVE){

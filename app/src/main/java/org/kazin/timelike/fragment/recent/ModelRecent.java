@@ -103,11 +103,41 @@ public class ModelRecent {
         }
     }
 
+    private void loadRecentUpdate(){
+        if(mBackend.checkInstLoggedIn()){
+            mBackend.getRecentUpdate(new BackendManager.GetFeedClk() {
+                @Override
+                public void success(ArrayList<ImageTimelike> feed) {
+                    updateFeed(feed);
+                    mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
+                        @Override
+                        public void success(ImageTimelike image) {
+                            setTimelike(image);
+                        }
+
+                        @Override
+                        public void error(String error) {
+                            Log.d("apkapk", "GetFeedTimeLikes error: " + error);
+                        }
+                    });
+                }
+
+                @Override
+                public void error(String error) {
+                    Log.d("apkapk", "Error Logging instagram: " + error);
+                }
+            });
+        }
+    }
+
     public void setTimelike(ImageTimelike image){
         presenter.setTimelike(image);
     }
 
 
+    public void updateFeed(ArrayList<ImageTimelike> image){
+        presenter.updateFeed(image);
+    }
     public void onClickLogOff() {
         mBackend.logOff();
         ((MainActivity)MainActivity.getMainActivity()).setFirstTab();
