@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
+import com.parse.Parse;
+import com.parse.ParseCrashReporting;
+
 /**
  * Created by Alexey on 16.06.2015.
  */
@@ -16,6 +19,9 @@ public class TimelikeApp extends Application {
         super.onCreate();
         context = getApplicationContext();
         application = TimelikeApp.this;
+
+        ParseCrashReporting.enable(context);
+        Parse.initialize(this, "vkOmdpKK7NAw6MOL1zXZrSGdZ69QtbV05NwpHV9G", "8MBAp9Rs8vYBLjOzjVOt60B7G8U731OhYWg2oJkz");
     }
 
     public static Context getContext() {

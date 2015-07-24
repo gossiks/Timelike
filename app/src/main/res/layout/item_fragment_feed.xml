@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/white_textColorPrimary_timelike"
+
+
+    >
 
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/image_feed_item"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:minHeight="200dp"
+        android:paddingTop="2dp"
+
         />
 
 
@@ -18,30 +22,35 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="description"
+        android:textColor="@color/black_textColor_timelike"
         android:id="@+id/description_feed_item"
         android:layout_below="@+id/image_feed_item"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="50dp "
-        android:layout_height="50dp"
+        android:layout_width="100dp "
+        android:layout_height="100dp"
         android:id="@+id/like_image_item_user_fragment_feed"
         android:background="@mipmap/ic_like"
-        android:layout_marginBottom="32dp"
-        android:layout_marginRight="29dp"
-        android:layout_marginEnd="29dp"
+
         android:layout_alignBottom="@+id/image_feed_item"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:textColor="@color/primary_dark_material_light"
+         />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/comments_feed_item_user_fragment"
+
+    <org.kazin.timelike.misc.ExpandableHeightListView
         android:layout_below="@+id/description_feed_item"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#ffffc734" />
+        android:id="@+id/comments_feed_item_user_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:focusable="false"
+        android:scrollbars="none"
+        >
+    </org.kazin.timelike.misc.ExpandableHeightListView>
 
 </RelativeLayout>

@@ -7,46 +7,34 @@ import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
+import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.LogInCallback;
-import com.parse.Parse;
-import com.parse.ParseCrashReporting;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
-import org.kazin.timelike.R;
-import org.kazin.timelike.misc.Const;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
-import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
- * Created by Alexey on 16.06.2015.
+ * Created by Alexey on 06.07.2015.
  */
 public class FireManager {
-
     private static FireManager manager;
     private Context mContext;
-    private Firebase mFireBase;
+    private Firebase mFirebase;
+
+    private HashMap<String,ValueEventListener> mListenersToRemove = new HashMap<String,ValueEventListener>();
 
     public FireManager() {
+        mContext = TimelikeApp.getContext();
         createConnection();
     }
 
     private void createConnection(){
-        mContext = TimelikeApp.getContext();
         Firebase.setAndroidContext(mContext);
-        mFireBase = new Firebase("https://timelike.firebaseio.com/");
+        mFirebase = new Firebase("https://timelike.firebaseio.com/");
     }
 
     public static FireManager getInstance(){
@@ -58,107 +46,86 @@ public class FireManager {
         }
     }
 
-    public void initializeConnection(){
-        createConnection();
-    }
-
-
-
-    public String getFireUsername() {
-            return "n.o.u.s.e.r";
-    }
-
-    public void loginFire(final UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
-        Firebase users = mFireBase.child("users").child("tempUser");
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void loginAnon(final BackendManager.LoginFireAnonClk callback) {
+        mFirebase.authAnonymously(new Firebase.AuthResultHandler() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("apkapk","users data snapshot"+dataSnapshot+". getValue: "+dataSnapshot.getValue());
-                if(dataSnapshot.getValue()==null){
-                    signUp(user, fireLoginClk);
-                }
+            public void onAuthenticated(AuthData authData) {
+                callback.success();
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                callback.error(firebaseError.toString());
             }
         });
     }
 
-    private void signUp(UserTimelike user, final BackendManager.ParseLoginClk fireLoginClk){
-        mFireBase.createUser(user.username + "@unknownemail.com", generatePassword(user), new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> result) {
-                System.out.println("Successfully created user account with uid: " + result.get("uid"));
-                fireLoginClk.success();
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                Log.d("apkapk","Firebase user create error: "+firebaseError);
-                fireLoginClk.error(firebaseError.toString());
-            }
-        });
-    }
-
-
-    public void getFeed(final ArrayList<ImageTimelike> images, final BackendManager.BackendGetFeedClk callback){
-
-
-        /*ParseQuery<ParseObject> queryGetFeed = ParseQuery.getQuery(Const.IMAGE_CLASS_PARSE);
-        Collection<String> idImageInst = new ArrayList<>(images.size());
-        for(ImageTimelike image: images){
-            idImageInst.add(image.getImageId());
-        }
-        queryGetFeed.whereContainedIn(Const.IMAGE_ID_INST_PARSE, idImageInst);
-        queryGetFeed.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                for (int i = 0; i < list.size(); i++) {
-                    String idImage = list.get(i).getString(Const.IMAGE_ID_INST_PARSE);
-                    ImageTimelike image = getImage(idImage, images);
-                    if (image != null) {
-                        image.setTimelike(list.get(i).getInt(Const.IMAGE_TIMELIKE_PARSE));
-
-                        //TODO check if actual object ImageTimelike in ArrayList changes
+    public void getTimelikes(ArrayList<String> imageIds, final BackendManager.GetFeedTimelikes callback) {
+        Firebase tempImageRef;
+        removeAllImageListeners();
+        for(final String imageId:imageIds){
+            tempImageRef = mFirebase.child("image").child(imageId);
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d("apkapk","onDataChangeImage fired for imageId: "+imageId+" With timelike value: "+dataSnapshot.getValue());
+                    if(dataSnapshot.getValue()==null){
+                        callback.error("no FireData for imageId");
+                        return;
                     }
-                    callback.successInst(images);
+                    ImageTimelike image = new ImageTimelike();
+                    image.setImageId(imageId);
+                    image.setTimelike((Long) dataSnapshot.getValue());
+                    callback.success(image);
                 }
 
-            }
-        });*/
-    }
-
-
-
-
-    //misc
-
-    private ImageTimelike getImage(String idImage, ArrayList<ImageTimelike> images){
-        for (int i=0; i<images.size();i++){
-            if(images.get(i).getImageId().equals(idImage)){
-                return images.get(i);
-            }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    callback.error(firebaseError.toString());
+                }
+            };
+            tempImageRef.addValueEventListener(valueEventListener);
+            saveImageListenerToRemove(imageId, valueEventListener);
         }
-        return null;
     }
-    private String generatePassword(UserTimelike user){
-        String[] username = user.username.split("");
-        String[] userid = user.id.split("");
 
-        String pass = new String();
-        int usernameLength = username.length;
-        String tempPartUsername;
+    public void onReloadFeed(){
+        removeAllImageListeners();
+    }
 
-        for(int i=0; i<userid.length; i++){
-            pass = pass + userid[i];
-            if(i<usernameLength){
-                pass = pass + username[i];
+    public void saveTimelike(String imageid, final long timelike) {
+        Firebase tempImageRef = mFirebase.child("image").child(imageid);
+        tempImageRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData currentData) {
+                if(currentData.getValue()==null){
+                    currentData.setValue(timelike);
+                } else {
+                    currentData.setValue((long)currentData.getValue()+timelike);
+                }
+                return Transaction.success(currentData);
             }
-        }
-        return pass;
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d("apkapk","Save Timelike errorcode: "+ firebaseError);
+            }
+        });
     }
 
 
+    //misc for FireManager
+    private void saveImageListenerToRemove(String imageId, ValueEventListener listener){
+        mListenersToRemove.put(imageId, listener);
+    }
+
+    private void removeAllImageListeners(){
+        Firebase imageRef = mFirebase.child("image");
+        Firebase tempImageRef;
+        for(HashMap.Entry<String,ValueEventListener> entry: mListenersToRemove.entrySet()){
+            tempImageRef = imageRef.child(entry.getKey());
+            tempImageRef.removeEventListener(entry.getValue());
+        }
+        mListenersToRemove.clear();
+    }
 }

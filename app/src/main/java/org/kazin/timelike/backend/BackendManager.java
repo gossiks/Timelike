@@ -1,7 +1,9 @@
 package org.kazin.timelike.backend;
 
 import android.content.Context;
-import android.util.Log;
+
+import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
@@ -10,116 +12,90 @@ import org.kazin.timelike.object.UserTimelike;
 import java.util.ArrayList;
 
 /**
- * Created by Alexey on 16.06.2015.
+ * Created by Alexey on 06.07.2015.
  */
 public class BackendManager {
-    private static BackendManager manager;
-    private InstagramManager mInstagramManager;
-    private FireManager mFireManager;
 
     private Context mContext;
-
-    private UserTimelike mCurrentUser;
+    public  static BackendManager mManager;
+    private FireManager mFireManager2;
+    private InstagramManager mInstagramManager;
 
     public BackendManager() {
         mContext = TimelikeApp.getContext();
+        mFireManager2 = new FireManager();
         mInstagramManager = InstagramManager.getInstance();
-        mFireManager = FireManager.getInstance();
-    }
 
-    public static BackendManager getInstance() {
-        if(manager == null){
-            return manager = new BackendManager();
-        }
-        else {
-            return manager;
-        }
-    }
 
-    public void initialize(final BackendInitializeClk callback){
-        if(!mInstagramManager.isInstagramActive()){
-            mInstagramManager.initialize();
-        }
-        if(mInstagramManager.getCurrentUser()!=null){
-            mCurrentUser = mInstagramManager.getCurrentUser();
-            authorizeFireIfNecessary(callback);
-        }
-        else{
-            mInstagramManager.authorize(new InstagramAutorizeClk() {
-                @Override
-                public void success(UserTimelike user) {
-                    mCurrentUser = mInstagramManager.getCurrentUser();
-                    authorizeFireIfNecessary(callback);
-
-                }
-
-                @Override
-                public void error(String error) {
-
-                }
-
-                @Override
-                public void cancel() {
-
-                }
-            });
-        }
 
     }
 
-    private void authorizeFireIfNecessary(final BackendInitializeClk callback) {
-        if(mCurrentUser.username != mFireManager.getFireUsername()){
-            mFireManager.loginFire(mCurrentUser, new ParseLoginClk() {
-                @Override
-                public void success() {
-                    //initialize(callback);
-                    callback.success();
-                }
-
-                @Override
-                public void error(String error) {
-                    Log.e("apk", "BackendManager error Parse Login: " + error);
-                }
-            });
-
-            return;
+    public static BackendManager getInstance(){
+        if(mManager==null){
+            mManager = new BackendManager();
         }
-        else{
-            callback.success();
-        }
+        return mManager;
     }
 
-    public UserTimelike getCurrentUser(){
-        return mCurrentUser;
-    }
-
-    public void getFeedInst(BackendGetFeedClk callback){
+    public void getFeed(GetFeedClk callback){
         mInstagramManager.getFeed(callback);
     }
 
-    public void getFeedParse(ArrayList<ImageTimelike> feed,BackendGetFeedClk callback){
-        mFireManager.getFeed(feed, callback);
+    public void getRecentFeed(GetFeedClk callback){
+        mInstagramManager.getRecentFeed(callback);
     }
 
-    //misc to other
-    public interface BackendInitializeClk{
-        void success();
+    public void getFeedUpdate(GetFeedClk callback){
+        mInstagramManager.getFeedUpdate(callback);
     }
 
-    public interface BackendGetFeedClk {
-        void successInst(ArrayList<ImageTimelike> feed);
+    public void LoginInst(LoginInstClk callback){
+        mInstagramManager.login(callback);
     }
 
-    //misc to BackendManager
+    public boolean checkInstLoggedIn(){
+        return mInstagramManager.getCurrentUser()!=null;
+    }
 
-    public interface InstagramAutorizeClk {
+    public void LoginFireAnon(LoginFireAnonClk callback){
+        mFireManager2.loginAnon(callback);
+    }
+
+    synchronized public void getFeedTimeLikes(ArrayList<ImageTimelike> images, GetFeedTimelikes callback){
+        ArrayList<String> imageIds = new ArrayList<>(images.size());
+        for(ImageTimelike image:images){
+            imageIds.add(image.getImageId());
+        }
+        mFireManager2.getTimelikes(imageIds, callback);
+    }
+
+    public void saveTimelike(String imageid, long timelike) {
+        mFireManager2.saveTimelike(imageid, timelike);
+    }
+
+    public void logOff() {
+        mInstagramManager.logOff();
+    }
+
+    //misc for other
+
+    public interface LoginInstClk{
         void success(UserTimelike user);
         void error(String error);
-        void cancel();
     }
 
-    public interface ParseLoginClk{
+    public interface LoginFireAnonClk{
         void success();
+        void error(String error);
+    }
+
+    public interface GetFeedClk{
+        void success(ArrayList<ImageTimelike> feed);
+        void error(String error);
+    }
+
+    public interface GetFeedTimelikes{
+        void success(ImageTimelike image);
         void error(String error);
     }
 }

@@ -1,12 +1,18 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId "org.kazin.timelike"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -30,16 +36,19 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
     compile 'com.firebase:firebase-client-android:2.3.1+'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
 
-    //for aminations
+    //for animations
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.easing:library:1.0.1@aar'
     compile 'com.daimajia.androidanimations:library:1.1.3@aar'
-
+    compile 'com.kbeanie:image-chooser-library:1.4.4@aar'
+    compile 'com.github.AlbertGrobas:MovingImageView:381fddac64'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     testCompile 'junit:junit:4.12'
 }

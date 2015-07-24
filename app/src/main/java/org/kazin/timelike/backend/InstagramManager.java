@@ -17,24 +17,25 @@ import org.kazin.timelike.MainActivity;
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
-import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 16.06.2015.
+ * Created by Alexey on 06.07.2015.
  */
 public class InstagramManager {
-    private static InstagramManager manager;
 
-    private Context mContext;
+    private static InstagramManager manager;
     private Instagram mInstagram;
     private InstagramSession mInstagramSession;
+    private Context mContext;
+    int mLastItemLoaded = 0;
 
-    private InstagramManager() {
-       mContext = TimelikeApp.getContext();
+
+    private InstagramManager(){
+        mContext = TimelikeApp.getContext();
         createConnection();
     }
 
@@ -56,21 +57,105 @@ public class InstagramManager {
         }
     }
 
-    public void initialize(){
-            createConnection();
+    public void getFeed(final BackendManager.GetFeedClk callback) {
+        List<NameValuePair> params = new ArrayList<>(1);
+        params.add(new BasicNameValuePair("count", "40")); //TODO remember to chang 10
+
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    mLastItemLoaded = 40; //TODO remember to extract field
+                    callback.success(parseFeed(response));
+                }
+                else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
     }
 
-    public boolean isInstagramActive(){
-        return mInstagramSession.isActive();
+    public void getRecentFeed(final BackendManager.GetFeedClk callback) {
+        List<NameValuePair> params = new ArrayList<>(1);
+        params.add(new BasicNameValuePair("count", "40"));
+
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.recent_feed_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    callback.success(parseFeed(response));
+                }
+                else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
     }
 
-    public void authorize(BackendManager.InstagramAutorizeClk callback){
-        mInstagram.authorize(new InstagramAuthLstn(callback));
+    public void getFeedUpdate(final BackendManager.GetFeedClk callback){
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("count", String.valueOf(mLastItemLoaded+40)));
+        //params.add(new BasicNameValuePair("MAX_ID", String.valueOf(mLastItemLoaded)));
+        //params.add(new BasicNameValuePair("max_id", "20"));
+        //params.add(new BasicNameValuePair("min_id", "2"));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response);
+                    //substracting images that already in feed. It is a pity that instagram library cant do this (TODO change lib)
+                    mLastItemLoaded +=40; // TODO Remember to change
+                    callback.success(imagesParsed);
+                }
+                else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
     }
 
+    public void login(final BackendManager.LoginInstClk callback) {
+        mInstagram.authorize(new Instagram.InstagramAuthListener() {
+            @Override
+            public void onSuccess(InstagramUser user) {
+                UserTimelike userTimelike = new UserTimelike();
+                userTimelike.accessToken = user.accessToken;
+                userTimelike.fullName = user.fullName;
+                userTimelike.id = user.id;
+                userTimelike.profilPicture = user.profilPicture;
+                userTimelike.username = user.username;
+                callback.success(userTimelike);
+            }
 
-    public String getInstagramUserName(){
-        return  mInstagramSession.getUser().username;
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+
+            @Override
+            public void onCancel() {
+                callback.error("canceled");
+            }
+        });
     }
 
     public UserTimelike getCurrentUser(){
@@ -78,68 +163,13 @@ public class InstagramManager {
         if(user==null){return null;}
 
         UserTimelike userTL = new UserTimelike(
-           user.id, user.username, user.fullName,
+                user.id, user.username, user.fullName,
                 user.profilPicture, user.accessToken
         ) ;
         return userTL;
     }
 
-    public void getFeed(final BackendManager.BackendGetFeedClk callback){
-        List<NameValuePair> params = new ArrayList<>(1);
-        params.add(new BasicNameValuePair("count", "10"));
-        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
-        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                if (!response.equals("")) {
-                    callback.successInst(parseFeed(response));
-                }
-            }
 
-            @Override
-            public void onError(String error) {
-
-            }
-        });
-    }
-
-    //misc for other
-
-    private class InstagramAuthLstn implements Instagram.InstagramAuthListener{
-
-        private BackendManager.InstagramAutorizeClk mInstagramAutorizeClk;
-
-        public InstagramAuthLstn(BackendManager.InstagramAutorizeClk mInstagramAutorizeClk) {
-            this.mInstagramAutorizeClk = mInstagramAutorizeClk;
-        }
-
-        @Override
-        public void onSuccess(InstagramUser user) {
-            UserTimelike userTimelike = new UserTimelike();
-            userTimelike.accessToken = user.accessToken;
-            userTimelike.fullName = user.fullName;
-            userTimelike.id = user.id;
-            userTimelike.profilPicture = user.profilPicture;
-            userTimelike.username = user.username;
-
-            mInstagramAutorizeClk.success(userTimelike);
-        }
-
-        @Override
-        public void onError(String error) {
-            mInstagramAutorizeClk.error(error);
-        }
-
-        @Override
-        public void onCancel() {
-            mInstagramAutorizeClk.cancel();
-        }
-    }
-
-    //misc outer
-    public String getToken(){
-        return mInstagramSession.getAccessToken();
-    }
 
     //misc methods
     private ArrayList<ImageTimelike> parseFeed(String response){
@@ -153,11 +183,20 @@ public class InstagramManager {
                 for (int i = 0; i < length; i++) {
                     JSONObject img = jsonData.getJSONObject(i);
                     ArrayList<ImageTimelike.Comment> comments =  parseComments(img.getJSONObject("comments"));
+
+                    String caption;
+                    try{
+                        caption = img.getJSONObject("caption").getString("text");
+                    } catch (JSONException error){
+                        caption = "";
+                    }
+
+
                     ImageTimelike imageTimelike = new ImageTimelike(
                             img.getJSONObject("images")
-                                    .getJSONObject("low_resolution").getString("url"),
-                            img.getString("id"), img.getJSONObject("user").getString("username"), img.getJSONObject("likes").getLong("count"),
-                            img.getJSONObject("user").getString("profile_picture"), img.getJSONObject("caption").getString("text")
+                                    .getJSONObject("standard_resolution").getString("url"),
+                            img.getString("id"), img.getJSONObject("user").getString("username"), 0L,
+                            img.getJSONObject("user").getString("profile_picture"), caption
                             , img.getString("type"), comments);
                     feed.add(imageTimelike);
                 }
@@ -186,4 +225,8 @@ public class InstagramManager {
         return response;
     }
 
+
+    public void logOff() {
+        mInstagramSession.reset();
+    }
 }

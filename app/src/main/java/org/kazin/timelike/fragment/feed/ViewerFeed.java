@@ -2,9 +2,11 @@ package org.kazin.timelike.fragment.feed;
 
 import android.widget.Toast;
 
-import org.kazin.timelike.misc.FeedAdapter2;
+import org.kazin.timelike.fragment.photo.ViewerPhoto;
+import org.kazin.timelike.misc.FeedAdapter;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 
 import java.util.ArrayList;
 
@@ -52,11 +54,33 @@ public class ViewerFeed {
         /*fragment.setFeedAdapter(new FeedAdapter(TimelikeApp.getContext(),
                 R.layout.item_fragment_feed,
                 feed));*/
-        fragment.setFeedAdapter(new FeedAdapter2(TimelikeApp.getContext(),
+        fragment.setFeedAdapter(new FeedAdapter(TimelikeApp.getContext(),
                 feed));
     }
 
     public void setMessage(String message){
         Toast.makeText(TimelikeApp.getContext(), message, Toast.LENGTH_SHORT);
+    }
+
+    public void setTimelike(ImageTimelike timelike) {
+        fragment.setTimelike(timelike);
+    }
+
+
+    public void setTimelike(String imageId, long lastDuration) {
+        ImageTimelike image = new ImageTimelike();
+        image.setImageId(imageId);
+        image.setTimelike(lastDuration/1000);
+        fragment.addTimelike(image);
+    }
+
+
+
+    public SimpleCallback getEndFeedListener() {
+        return presenter.getEndFeedListener();
+    }
+
+    public void updateFeed(ArrayList<ImageTimelike> image) {
+        fragment.updateFeed(image);
     }
 }

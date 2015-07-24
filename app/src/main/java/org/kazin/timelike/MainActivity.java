@@ -3,6 +3,7 @@ package org.kazin.timelike;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kbeanie.imagechooser.api.ChooserType;
+
 import org.kazin.timelike.fragment.feed.FragmentFeed;
+import org.kazin.timelike.fragment.photo.FragmentPhoto;
+import org.kazin.timelike.fragment.photo.ViewerPhoto;
+import org.kazin.timelike.fragment.recent.FragmentRecent;
 import org.kazin.timelike.misc.Const;
 
 
@@ -48,7 +54,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
         //this is only for Dialog.java, which cant handle with any context but blablaActivity.this. Bug or feature? We will never know...
         mainActivity = this;
 
@@ -70,6 +75,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
+
+
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
             // Create a tab with text corresponding to the page title defined by
@@ -81,16 +88,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
     }
 
     public static Activity getMainActivity(){
         return mainActivity;
     }
 
+    public void setFirstTab(){
+        mViewPager.setCurrentItem(0);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -141,6 +153,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             switch(position){
                 case Const.FEED_SECTION_MAIN_ACTIVITY:
                     return FragmentFeed.getInstance();
+                case Const.PHOTO_SECTION_MAIN_ACTIVITY:
+                    return FragmentPhoto.getInstance();
+                case Const.RECENT_SECTION_MAIN_ACTIVITY:
+                    return FragmentRecent.getInstance();
                 default:
                     return null;
             }
@@ -148,8 +164,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            // Show 1 total pages.
-            return 1;
+
+            return 3;
         }
 
         @Override
@@ -159,9 +175,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 case 0:
                     return getString(R.string.feed_title_section).toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return getString(R.string.photo_title_section).toUpperCase(l);
                 case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
+                    return getString(R.string.recent_title_section).toUpperCase(l);
             }
             return null;
         }
@@ -197,6 +213,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK &&
+                (requestCode == ChooserType.REQUEST_PICK_PICTURE||
+                        requestCode == ChooserType.REQUEST_CAPTURE_PICTURE)) {
+            ViewerPhoto.getInstance(null).onImageChosen(requestCode, data);
+
         }
     }
 

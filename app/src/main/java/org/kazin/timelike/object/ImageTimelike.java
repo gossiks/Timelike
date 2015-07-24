@@ -1,6 +1,8 @@
 package org.kazin.timelike.object;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Alexey on 16.06.2015.
@@ -18,7 +20,7 @@ public class ImageTimelike {
     String description;
     long timelike;
     String type = TYPE_IMAGE;
-    ArrayList<Comment> comments;
+    ArrayList<Comment> comments=null;
 
     private boolean isPinned = false;
 
@@ -59,6 +61,10 @@ public class ImageTimelike {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public void setImageId(String imageId){
+        this.imageId = imageId;
     }
 
     public String getImageId() {
@@ -126,14 +132,19 @@ public class ImageTimelike {
     }
 
     public String[] getCommentsStringArray(int numberOfComments) {
-        String[] commentsString = new String[comments.size()];
-        int i = 0;
-        for(Comment comm:comments){
-            commentsString[i] = "@"+comm.getUsername()+" "+comm.getText();
-            i++;
-            if(i>numberOfComments){return commentsString;}
+        ArrayList<String> commentsString = new ArrayList<>();
+        if(comments.size()==0){
+            return commentsString.toArray(new String[0]);
         }
-        return commentsString;
+
+        if(numberOfComments>comments.size()){
+            numberOfComments = comments.size();
+        }
+
+        for(int i = 0; i<numberOfComments; i++){
+            commentsString.add("  - "+comments.get(i).getUsername()+" "+comments.get(i).getText());
+        }
+        return commentsString.toArray(new String[numberOfComments]);
     }
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
