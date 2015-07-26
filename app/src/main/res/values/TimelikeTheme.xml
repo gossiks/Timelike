@@ -46,13 +46,13 @@
     </style>
 
     //colors
-<color name="orange_light_timelike">#FFC734</color>
-<color name="orange_dark_timelike">#B28100</color>
+<color name="orange_light_timelike">#ffefb832</color>
+<color name="orange_dark_timelike">#ffe3a400</color>
 
 <color name="blue_ultra_light_timelike">#763466ff</color>
-<color name="blue_light_timelike">#295EFF</color>
-<color name="blue_medium_timelike">#104BFF</color>
-<color name="blue_dark_timelike">#002CB2</color>
+<color name="blue_light_timelike">#ff2554dc</color>
+<color name="blue_medium_timelike">#ff2d93d4</color>
+<color name="blue_dark_timelike">#ff00144f</color>
 
 <color name="white_textColorPrimary_timelike">#e1f8f8f8</color>
 <color name="black_textColor_timelike">#db535252</color>

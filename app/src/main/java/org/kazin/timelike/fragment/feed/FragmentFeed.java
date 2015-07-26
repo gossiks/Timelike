@@ -108,6 +108,7 @@ public class FragmentFeed extends Fragment{
         private String imageId;
         private long timelike;
         private Button thisView;
+        Animator.AnimatorListener animatorListener;
 
         private int lastMotionEvent;
         long systemtime;
@@ -115,35 +116,39 @@ public class FragmentFeed extends Fragment{
         public LikeListener(String imageId, Button thisView) {
             this.imageId = imageId;
             this.thisView = thisView;
+            animatorListener = getAnimatorListener();
         }
 
 
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-
             lastMotionEvent = event.getAction();
             Log.d("apk", "lastMovionEvent: " + lastMotionEvent);
             if(lastMotionEvent == MotionEvent.ACTION_DOWN) {
                 lastDown = System.currentTimeMillis();
                 v.getParent().requestDisallowInterceptTouchEvent(true); //remember this works only for this amount of parents
-                v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
-                stopWoble();
+                //v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+
                 showWoble();
             } else if(lastMotionEvent!=MotionEvent.ACTION_MOVE){
                 /*if(lastMotionEvent == MotionEvent.ACTION_CANCEL|lastMotionEvent == MotionEvent.ACTION_MOVE){
                     return false;
                 }*/
                 systemtime = System.currentTimeMillis();
-                Log.d("apkapk", "Sytem time is: "+systemtime );
+                //Log.d("apkapk", "System time is: "+systemtime );
 
                 lastDuration = systemtime - lastDown;
                 if (lastDown==0){
                     return false;
                 }
+                if(lastDuration<500){
+                    return false;
+                }
                 if(lastDuration<1000){
                     lastDuration = 1000;
                 }
+
                 stopWoble();
                 ViewerFeed viewerFeed = ViewerFeed.getInstance(null); //TODO. Can crush here if viewer is not initalized yet. (barely possible)
 
@@ -152,13 +157,17 @@ public class FragmentFeed extends Fragment{
                 viewerFeed.onLikeReceived(imageId, lastDuration);
                 lastDown = System.currentTimeMillis();
                 v.getParent().requestDisallowInterceptTouchEvent(false);
-                v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(false);
+                //v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(false);
             }
             return false;
         }
 
         private void showWoble(){
-            YoYo.with(Techniques.Wobble).withListener(new Animator.AnimatorListener() {
+            YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView);
+        }
+
+        private Animator.AnimatorListener getAnimatorListener(){
+            return new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -184,8 +193,9 @@ public class FragmentFeed extends Fragment{
                 public void onAnimationRepeat(Animator animation) {
 
                 }
-            }).playOn(thisView);
+            };
         }
+
 
         private void stopWoble(){
             YoYo.with(Techniques.Wobble).playOn(thisView).stop(true);
