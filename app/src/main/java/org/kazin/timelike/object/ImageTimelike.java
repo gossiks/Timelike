@@ -1,5 +1,8 @@
 package org.kazin.timelike.object;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 /**
  * Created by Alexey on 16.06.2015.
  */
-public class ImageTimelike {
+public class ImageTimelike implements Parcelable{
 
     public final static String TYPE_IMAGE = "image";
     public final static String TYPE_VIDEO = "video";
@@ -16,6 +19,7 @@ public class ImageTimelike {
     String imageUrl;
     String imageId;
     String username;
+    String userId;
     String avatarUrl;
     String description;
     long timelike;
@@ -44,10 +48,11 @@ public class ImageTimelike {
         this.type = type;
     }
 
-    public ImageTimelike(String imageUrl, String imageId, String username, long timelike, String avatarUrl, String description,  String type, ArrayList<Comment> comments) {
+    public ImageTimelike(String imageUrl, String imageId, String username, String userId, long timelike, String avatarUrl, String description,  String type, ArrayList<Comment> comments) {
         this.imageUrl = imageUrl;
         this.imageId = imageId;
         this.username = username;
+        this.userId = userId;
         this.avatarUrl = avatarUrl;
         this.description = description;
         this.timelike = timelike;
@@ -150,7 +155,7 @@ public class ImageTimelike {
         this.comments = comments;
     }
 
-    public static class Comment{
+    public static class Comment implements Parcelable{
         String username;
         String avatar;
         String text;
@@ -199,5 +204,87 @@ public class ImageTimelike {
         public String toString() {
             return "@"+username+"  "+text;
         }
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.username);
+            dest.writeString(this.avatar);
+            dest.writeString(this.text);
+            dest.writeLong(this.createdTime);
+        }
+
+        protected Comment(Parcel in) {
+            this.username = in.readString();
+            this.avatar = in.readString();
+            this.text = in.readString();
+            this.createdTime = in.readLong();
+        }
+
+        public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+            public Comment createFromParcel(Parcel source) {
+                return new Comment(source);
+            }
+
+            public Comment[] newArray(int size) {
+                return new Comment[size];
+            }
+        };
+    }
+
+    //Parcelable interface for ImageTimeLike
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.imageUrl);
+        dest.writeString(this.imageId);
+        dest.writeString(this.username);
+        dest.writeString(this.avatarUrl);
+        dest.writeString(this.description);
+        dest.writeLong(this.timelike);
+        dest.writeString(this.type);
+        dest.writeList(this.comments);
+        dest.writeByte(isPinned ? (byte) 1 : (byte) 0);
+    }
+
+    protected ImageTimelike(Parcel in) {
+        this.imageUrl = in.readString();
+        this.imageId = in.readString();
+        this.username = in.readString();
+        this.avatarUrl = in.readString();
+        this.description = in.readString();
+        this.timelike = in.readLong();
+        this.type = in.readString();
+        this.comments = new ArrayList<Comment>();
+        in.readList(this.comments, List.class.getClassLoader());
+        this.isPinned = in.readByte() != 0;
+    }
+
+    public static final Creator<ImageTimelike> CREATOR = new Creator<ImageTimelike>() {
+        public ImageTimelike createFromParcel(Parcel source) {
+            return new ImageTimelike(source);
+        }
+
+        public ImageTimelike[] newArray(int size) {
+            return new ImageTimelike[size];
+        }
+    };
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -1,4 +1,4 @@
-package org.kazin.timelike.fragment.recent;
+package org.kazin.timelike.main.recent;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,28 +7,19 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
-import android.widget.Adapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
-import net.grobas.view.MovingImageView;
-
 import org.kazin.timelike.R;
-import org.kazin.timelike.fragment.photo.ViewerPhoto;
-import org.kazin.timelike.misc.RecentAdapter;
 import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 
 import java.util.ArrayList;
-
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
 public class FragmentRecent extends Fragment  {
@@ -43,6 +34,8 @@ public class FragmentRecent extends Fragment  {
    private SelectableRoundedImageView mAvatar;
    private TextView mUsername;
    private ListView mRecent;
+
+    private final String ADAPTER_SAVE_INSTANCE = "adapter";
 
    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecentAdapter2 mRecentAdapter;
@@ -61,7 +54,6 @@ public class FragmentRecent extends Fragment  {
            return fragment;
        }
    }
-
 
 
 
@@ -94,7 +86,20 @@ public class FragmentRecent extends Fragment  {
 
         mConvertView = convertView;
 
+        if(savedInstanceState!=null){
+            mRecentAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
+            setRecentFeed(mRecentAdapter);
+        }
+
         return convertView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mRecentAdapter!=null){
+            outState.putParcelable(ADAPTER_SAVE_INSTANCE, mRecentAdapter);
+        }
     }
 
 

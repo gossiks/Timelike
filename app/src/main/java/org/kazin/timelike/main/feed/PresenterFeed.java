@@ -1,4 +1,4 @@
-package org.kazin.timelike.fragment.feed;
+package org.kazin.timelike.main.feed;
 
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;

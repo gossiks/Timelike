@@ -1,7 +1,10 @@
 package org.kazin.timelike.misc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -28,18 +31,21 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
-import org.kazin.timelike.fragment.feed.FragmentFeed;
+import org.kazin.timelike.main.MainActivity;
+import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.user.UserActivity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 /**
  * Created by Alexey on 19.06.2015.
  */
-public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer {
+public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer, Parcelable {
 
     private ArrayList<ImageTimelike> mItems;
     private LayoutInflater mInflater;
@@ -48,30 +54,27 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     private final DisplayImageOptions mImageOptions;
 
     public FeedAdapter(Context context, ArrayList<ImageTimelike> images) {
+        if(context ==null){
+            context = TimelikeApp.getContext();
+        }
         mInflater = LayoutInflater.from(context);
         mContext = context;
-
-        ArrayList<ImageTimelike> items = new ArrayList<>(images.size()*2);
-        //ArrayList<Integer> header
-        /*ImageTimelike tempImage;
-        for(int i = 0; i<images.size();i++){
-            tempImage = images.get(i);
-            items.add(tempImage);
-        }
-        mItems = items;*/
 
         if(!ImageLoader.getInstance().isInited()){
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
             ImageLoader.getInstance().init(config);
         }
 
+
+
         mImageLoader = ImageLoader.getInstance();
 
-        mImageOptions = new DisplayImageOptions.Builder()
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).build();
+        mImageOptions = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).cacheInMemory(true).build();
 
         mItems = images;
     }
+
 
     @Override
     public int getCount() {
@@ -147,8 +150,16 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderHeader = (ViewHolderHeader) convertView.getTag();
         }
 
-        ImageTimelike user = mItems.get(position);
+        final ImageTimelike user = mItems.get(position);
         Picasso.with(mContext).load(user.getAvatarUrl()).into(holderHeader.avatar);// Faster than universal image loader. Here. Suprisingly.
+        holderHeader.avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, UserActivity.class);
+                intent.putExtra(UserActivity.USERNAME_USERACTIVITY_EXTRAS, user.getUserId());
+                MainActivity.getMainActivity().startActivity(intent);
+            }
+        });
         holderHeader.username.setText(user.getUsername());
 
         return convertView;
@@ -223,6 +234,8 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
         return contains;
     }
+
+
 
     //misc for FeedAdapter
     private class ViewHolderImage {
@@ -411,4 +424,32 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     public DisplayImageOptions getImageOptions() {
         return mImageOptions;
     }
+
+    //Parcelable interface
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.mItems);
+    }
+
+    private static FeedAdapter getFeedAdapter(Parcel in) {
+        ArrayList<ImageTimelike> items = new ArrayList<ImageTimelike>();
+        in.readList(items, List.class.getClassLoader());
+        return new FeedAdapter(TimelikeApp.getContext(), items);
+    }
+
+    public static final Creator<FeedAdapter> CREATOR = new Creator<FeedAdapter>() {
+        public FeedAdapter createFromParcel(Parcel source) {
+            return getFeedAdapter(source);
+        }
+
+        public FeedAdapter[] newArray(int size) {
+            return new FeedAdapter[size];
+        }
+    };
 }

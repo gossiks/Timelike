@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.kazin.timelike.R;
-import org.kazin.timelike.fragment.feed.FragmentFeed;
+import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.object.ImageTimelike;
 
 import java.util.ArrayList;

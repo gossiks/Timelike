@@ -1,8 +1,7 @@
-package org.kazin.timelike.fragment.feed;
+package org.kazin.timelike.main.feed;
 
 import android.widget.Toast;
 
-import org.kazin.timelike.fragment.photo.ViewerPhoto;
 import org.kazin.timelike.misc.FeedAdapter;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;

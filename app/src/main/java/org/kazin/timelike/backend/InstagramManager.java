@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.kazin.timelike.MainActivity;
+import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
@@ -29,13 +29,15 @@ import java.util.List;
 public class InstagramManager {
 
     private static InstagramManager manager;
-    private final int FEED_INDENTIFIER = 0;
-    private final int RECENT_INDENTIFIER = 1;
+    private final int FEED_IDENTIFIER = 0;
+    private final int RECENT_IDENTIFIER = 1;
+    private final int USER_FEED_IDENTIFIER = 2;
     private Instagram mInstagram;
     private InstagramSession mInstagramSession;
     private Context mContext;
     String mNextMaxImageIdFeed;
     String mNextMaxImageIdRecent;
+    private String mNextMaxUserFeedId;
 
 
     private InstagramManager(){
@@ -71,7 +73,7 @@ public class InstagramManager {
             public void onSuccess(String response) {
                 if (!response.equals("")) {
 
-                    callback.success(parseFeed(response,FEED_INDENTIFIER));
+                    callback.success(parseFeed(response, FEED_IDENTIFIER));
                 }
                 else {
                     callback.error("empty response");
@@ -94,7 +96,7 @@ public class InstagramManager {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
-                    callback.success(parseFeed(response, RECENT_INDENTIFIER));
+                    callback.success(parseFeed(response, RECENT_IDENTIFIER));
                 }
                 else {
                     callback.error("empty response");
@@ -118,7 +120,7 @@ public class InstagramManager {
             public void onSuccess(String response) {
                 if (!response.equals("")) {
 
-                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_INDENTIFIER);
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_IDENTIFIER);
                     callback.success(imagesParsed);
                 } else {
                     callback.error("empty response");
@@ -141,7 +143,59 @@ public class InstagramManager {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
-                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, RECENT_INDENTIFIER);
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, RECENT_IDENTIFIER);
+                    callback.success(imagesParsed);
+                } else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
+    }
+
+    public void getUserFeed(String userId, final BackendManager.GetFeedClk callback) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("count", "20"));
+        //params.add(new BasicNameValuePair("max_id", mNextMaxUserFeedId));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+
+        String endpoint = mContext.getString(R.string.user_feed_instagram_api_first_part)+userId
+                +mContext.getString(R.string.user_feed_instagram_api_second_part);
+        request.createRequest("GET", endpoint, params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, USER_FEED_IDENTIFIER);
+                    callback.success(imagesParsed);
+                } else {
+                    callback.error("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.error(error);
+            }
+        });
+    }
+
+    public void getUserFeedUpdate(String userId, final BackendManager.GetFeedClk callback) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("count", "20"));
+        params.add(new BasicNameValuePair("max_id", mNextMaxUserFeedId));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+
+        String endpoint = mContext.getString(R.string.user_feed_instagram_api_first_part)+userId
+                +mContext.getString(R.string.user_feed_instagram_api_second_part);
+        request.createRequest("GET", endpoint, params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, USER_FEED_IDENTIFIER);
                     callback.success(imagesParsed);
                 } else {
                     callback.error("empty response");
@@ -175,7 +229,7 @@ public class InstagramManager {
             public void onSuccess(String response) {
                 if (!response.equals("")) {
 
-                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_INDENTIFIER);
+                    ArrayList<ImageTimelike> imagesParsed = parseFeed(response, FEED_IDENTIFIER);
                     Log.d("apkapkTest", "response is: 1st - " + imagesParsed.get(0).getImageId() + ". 2nd - " + imagesParsed.get(1).getImageId());
                 } else {
                     Log.d("apkapkTest", "empty response");
@@ -257,7 +311,7 @@ public class InstagramManager {
                     ImageTimelike imageTimelike = new ImageTimelike(
                             img.getJSONObject("images")
                                     .getJSONObject("standard_resolution").getString("url"),
-                            img.getString("id"), img.getJSONObject("user").getString("username"), 0L,
+                            img.getString("id"), img.getJSONObject("user").getString("username"),img.getJSONObject("user").getString("id"), 0L,
                             img.getJSONObject("user").getString("profile_picture"), caption
                             , img.getString("type"), comments);
                     feed.add(imageTimelike);
@@ -274,11 +328,14 @@ public class InstagramManager {
 
     private void setNextId(int type, String nextMaxId){
         switch (type){
-            case(FEED_INDENTIFIER):
+            case(FEED_IDENTIFIER):
                 mNextMaxImageIdFeed = nextMaxId;
                 break;
-            case(RECENT_INDENTIFIER):
+            case(RECENT_IDENTIFIER):
                 mNextMaxImageIdRecent = nextMaxId;
+                break;
+            case(USER_FEED_IDENTIFIER):
+                mNextMaxUserFeedId = nextMaxId;
                 break;
             default:
                 break;
@@ -305,4 +362,6 @@ public class InstagramManager {
     public void logOff() {
         mInstagramSession.reset();
     }
+
+
 }

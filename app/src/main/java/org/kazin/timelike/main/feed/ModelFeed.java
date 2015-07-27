@@ -1,62 +1,73 @@
-package org.kazin.timelike.fragment.recent;
+package org.kazin.timelike.main.feed;
 
 import android.util.Log;
 
-import org.kazin.timelike.MainActivity;
 import org.kazin.timelike.backend.BackendManager;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
 
 /**
- * Created by Alexey on 17.07.2015.
+ * Created by Alexey on 16.06.2015.
  */
-public class ModelRecent {
+public class ModelFeed {
 
-    private static ModelRecent model;
-    private PresenterRecent presenter;
+    private static ModelFeed model;
+    private PresenterFeed presenterFeed;
 
     private BackendManager mBackend;
-
     private ArrayList<ImageTimelike> mFeedLastState;
 
-    private ModelRecent(){
-        mBackend = BackendManager.getInstance();
+    public ModelFeed() {
+        mBackend = new BackendManager();
     }
 
-    private void setMVP(PresenterRecent presenter){
-        this.presenter = presenter;
-    }
-
-    public static ModelRecent getInstance(PresenterRecent presenter){
-        if(model == null){
-            model = new ModelRecent();
-            model.setMVP(presenter);
+    private void setFeedPresenter(PresenterFeed presenter){
+        if(presenterFeed==null){
+            this.presenterFeed = presenter;
         }
-        return model;
     }
+
+
+    public static ModelFeed getInstance(PresenterFeed presenter) {
+        if(model == null){
+            model = new ModelFeed();
+            model.setFeedPresenter(presenter);
+            return model;
+        }
+        else{
+            model.setFeedPresenter(presenter);
+            return model;
+        }
+    }
+
 
     public void onLaunch() {
         mBackend = BackendManager.getInstance();
         loadFeed(false);
     }
 
-    public void onClickReload() {
+    public void onClickReload(){
         loadFeed(true);
+        //mBackend.testUpdateFeed();
     }
+
+    //misc
 
     private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
-            if(mFeedLastState!=null && !reload){
-                presenter.setRecentFeed(mFeedLastState);
+            if(mFeedLastState!=null & !reload){
+                presenterFeed.setFeed(mFeedLastState);
                 return;
             }
-            mBackend.getRecentFeed(new BackendManager.GetFeedClk() {
+            Log.d("apkapk","Instagram is logged!");
+            mBackend.getFeed(new BackendManager.GetFeedClk() {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {
                     mFeedLastState = feed;
-                    presenter.setRecentFeed(feed);
+                    presenterFeed.setFeed(feed);
                     mBackend.getFeedTimeLikes(feed, new BackendManager.GetFeedTimelikes() {
                         @Override
                         public void success(ImageTimelike image) {
@@ -65,14 +76,14 @@ public class ModelRecent {
 
                         @Override
                         public void error(String error) {
-                            Log.d("apkapk", "GetFeedTimeLikes error: " + error);
+                            Log.d("apkapk", "GetFeedTimeLikes error: "+error);
                         }
                     });
                 }
 
                 @Override
                 public void error(String error) {
-                    Log.d("apkapk", "Error Logging instagram: " + error);
+                    Log.d("apkapk","Error Logging instagram: "+error);
                 }
             });
         }
@@ -97,15 +108,15 @@ public class ModelRecent {
 
                 @Override
                 public void error(String error) {
-                    Log.d("apkapk", "FireBase login Anon error: " + error);
+                    Log.d("apkapk","FireBase login Anon error: "+ error);
                 }
             });
         }
     }
 
-    private void loadRecentUpdate(){
+    private void loadFeedUpdate(){
         if(mBackend.checkInstLoggedIn()){
-            mBackend.getRecentUpdate(new BackendManager.GetFeedClk() {
+            mBackend.getFeedUpdate(new BackendManager.GetFeedClk() {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {
                     updateFeed(feed);
@@ -130,16 +141,42 @@ public class ModelRecent {
         }
     }
 
-    public void setTimelike(ImageTimelike image){
-        presenter.setTimelike(image);
-    }
 
+
+    public void setTimelike(ImageTimelike image){
+        presenterFeed.setTimelike(image);
+    }
 
     public void updateFeed(ArrayList<ImageTimelike> image){
-        presenter.updateFeed(image);
+        presenterFeed.updateFeed(image);
     }
-    public void onClickLogOff() {
-        mBackend.logOff();
-        ((MainActivity)MainActivity.getMainActivity()).setFirstTab();
+
+    public void onLikeReceived( String imageid, long timelike){
+        mBackend.saveTimelike(imageid, Math.abs(timelike / 1000)); //timelike converts to seconds with 1000
     }
+
+
+    public SimpleCallback getEndFeedListener() {
+        return new SimpleCallback() {
+            @Override
+            public void success(Object object) {
+                //object is current page int
+                loadFeedUpdate();
+            }
+
+            @Override
+            public void fail(Object object) {
+
+            }
+        };
+    }
+
+    public BackendManager getBackend() {
+        if(mBackend == null){
+            mBackend = BackendManager.getInstance();
+        }
+        return mBackend;
+    }
+
+
 }

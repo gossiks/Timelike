@@ -1,4 +1,4 @@
-package org.kazin.timelike.fragment.feed;
+package org.kazin.timelike.main.feed;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,7 +34,8 @@ public class FragmentFeed extends Fragment{
     private static StickyListHeadersListView mFeedView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-
+    private final String ADAPTER_SAVE_INSTANCE = "adapter";
+    private FeedAdapter mFeedAdapter;
 
     private void setMVP(FragmentFeed fragment){
         viewer = ViewerFeed.getInstance(fragment);
@@ -71,12 +72,24 @@ public class FragmentFeed extends Fragment{
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike, R.color.blue_medium_timelike);
 
+        if(savedInstanceState!=null){
+            mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
+            setFeedAdapter(mFeedAdapter);
+        }
+
         return rootView;
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mFeedAdapter!=null){
+            outState.putParcelable(ADAPTER_SAVE_INSTANCE, mFeedAdapter);
+        }
+    }
 
     public void setFeedAdapter(FeedAdapter adapter){
+        mFeedAdapter = adapter;
         mFeedView.setAdapter(adapter);
         mSwipeRefreshLayout.setRefreshing(false);
     }

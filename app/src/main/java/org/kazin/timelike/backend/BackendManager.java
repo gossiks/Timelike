@@ -85,6 +85,10 @@ public class BackendManager {
         mInstagramManager.logOff();
     }
 
+    public void getUserFeed(String userId, GetFeedClk callback) {
+        mInstagramManager.getUserFeed(userId, callback);
+    }
+
     //misc for other
 
     public interface LoginInstClk{

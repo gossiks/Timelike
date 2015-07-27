@@ -1,4 +1,4 @@
-package org.kazin.timelike.fragment.recent;
+package org.kazin.timelike.main.recent;
 
 
 import android.support.v4.app.Fragment;
