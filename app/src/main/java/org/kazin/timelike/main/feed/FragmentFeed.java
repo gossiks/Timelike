@@ -70,7 +70,7 @@ public class FragmentFeed extends Fragment{
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike, R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_blue_timelike, R.color.blue_medium_timelike);
 
         if(savedInstanceState!=null){
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);

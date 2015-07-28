@@ -1,10 +1,13 @@
 package org.kazin.timelike.main.recent;
 
 import android.util.Log;
+import android.widget.AbsListView;
 
 import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.backend.BackendManager;
+import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
@@ -72,6 +75,7 @@ public class ModelRecent {
 
                 @Override
                 public void error(String error) {
+                    TimelikeApp.showToast("Recent feed load fail: " + error);
                     Log.d("apkapk", "Error Logging instagram: " + error);
                 }
             });
@@ -124,6 +128,7 @@ public class ModelRecent {
 
                 @Override
                 public void error(String error) {
+                    TimelikeApp.showToast("Recent feed update load fail: " + error);
                     Log.d("apkapk", "Error Logging instagram: " + error);
                 }
             });
@@ -141,5 +146,20 @@ public class ModelRecent {
     public void onClickLogOff() {
         mBackend.logOff();
         ((MainActivity)MainActivity.getMainActivity()).setFirstTab();
+    }
+
+    public SimpleCallback getEndListListener() {
+        return new SimpleCallback() {
+            @Override
+            public void success(Object object) {
+                //object is current page int
+                loadRecentUpdate();
+            }
+
+            @Override
+            public void fail(Object object) {
+
+            }
+        };
     }
 }

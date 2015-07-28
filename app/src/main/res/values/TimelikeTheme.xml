@@ -2,9 +2,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="TimelikeTheme" parent="Theme.AppCompat.Light">
         //appcompat material design
-        <item name="colorPrimary">@color/orange_light_timelike</item>
-        <item name="colorPrimaryDark">@color/orange_dark_timelike</item>
-        <item name="colorAccent">@color/blue_dark_timelike</item>
+        <item name="colorPrimary">@color/blue_medium_timelike</item>
+        <item name="colorPrimaryDark">@color/blue_dark_timelike</item>
+        <item name="colorAccent">@color/accent_blue_timelike</item>
 
 
         <item name="android:textColorPrimary">@color/white_textColorPrimary_timelike</item>
@@ -46,13 +46,13 @@
     </style>
 
     //colors
-<color name="orange_light_timelike">#ffefb832</color>
-<color name="orange_dark_timelike">#ffe3a400</color>
-
-<color name="blue_ultra_light_timelike">#763466ff</color>
-<color name="blue_light_timelike">#ff2554dc</color>
-<color name="blue_medium_timelike">#ff2d93d4</color>
-<color name="blue_dark_timelike">#ff00144f</color>
+//primary
+<color name="blue_ultra_light_timelike">#B3E5FC</color>
+<color name="blue_light_timelike">#4FC3F7</color>
+<color name="blue_medium_timelike">#03A9F4</color>
+<color name="blue_dark_timelike">#0277BD</color>
+//accent
+<color name="accent_blue_timelike">#FFD740</color>
 
 <color name="white_textColorPrimary_timelike">#e1f8f8f8</color>
 <color name="black_textColor_timelike">#db535252</color>

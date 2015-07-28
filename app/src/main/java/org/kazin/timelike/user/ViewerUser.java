@@ -85,10 +85,12 @@ public class ViewerUser {
     }
 
     public void setUsername(String username){
-        activity.mUsername.setText(username);
+        activity.mUsernameString = username;
+        activity.mUsername.setText(activity.mUsernameString);
     }
 
     public void setAvatar(String avatarUrl){
-        Picasso.with(TimelikeApp.getContext()).load(avatarUrl).into(activity.mAvatar);
+        activity.mAvatarUrl = avatarUrl;
+        Picasso.with(TimelikeApp.getContext()).load(activity.mAvatarUrl).into(activity.mAvatar);
     }
 }

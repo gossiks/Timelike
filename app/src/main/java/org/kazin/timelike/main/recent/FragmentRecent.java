@@ -15,6 +15,7 @@ import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
+import org.kazin.timelike.misc.EndlessScrollListener;
 import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
@@ -62,11 +63,17 @@ public class FragmentRecent extends Fragment  {
                              Bundle savedInstanceState) {
         View convertView = inflater.inflate(R.layout.fragment_recent, container, false);
 
+        if(viewer==null){
+            viewer = ViewerRecent.getInstance(this);
+        }
+
         mAvatar = (SelectableRoundedImageView) convertView.findViewById(R.id.avatar_user_item_fragment_recent);
         mRecent = (ListView) convertView.findViewById(R.id.recent_feed_fragment_fragment_recent);
         mUsername = (TextView) convertView.findViewById(R.id.username_item_user_fragment_recent);
         mSwipeRefreshLayout = (SwipeRefreshLayout) convertView.findViewById(R.id.recent_pull_to_refresh);
         Button logOffButton = (Button) convertView.findViewById(R.id.log_off_fragment_recent);
+
+        mRecent.setOnScrollListener(new EndlessScrollListener(viewer.getEndListListener()));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -74,7 +81,7 @@ public class FragmentRecent extends Fragment  {
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange_light_timelike, R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_blue_timelike, R.color.blue_medium_timelike);
 
         logOffButton.setOnClickListener(new View.OnClickListener() {
             @Override

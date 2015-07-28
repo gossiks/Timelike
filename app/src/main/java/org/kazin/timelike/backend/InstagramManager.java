@@ -139,7 +139,7 @@ public class InstagramManager {
         params.add(new BasicNameValuePair("count", "20"));
         params.add(new BasicNameValuePair("max_id", mNextMaxImageIdRecent));
         InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
-        request.createRequest("GET", mContext.getString(R.string.feed_user_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
+        request.createRequest("GET", mContext.getString(R.string.recent_feed_instagram_api), params, new InstagramRequest.InstagramRequestListener() {
             @Override
             public void onSuccess(String response) {
                 if (!response.equals("")) {
@@ -288,9 +288,14 @@ public class InstagramManager {
         ArrayList<ImageTimelike> feed = new ArrayList<>();
         try {
             JSONObject json = (JSONObject) new JSONTokener(response).nextValue();
+            try {
+                JSONObject paginationData = json.getJSONObject("pagination");
+                setNextId(nextId, paginationData.getString("next_max_id"));
+            }
+            catch (Exception error){
+                error.printStackTrace();
+            }
 
-            JSONObject paginationData = json.getJSONObject("pagination");
-            setNextId(nextId, paginationData.getString("next_max_id"));
 
             JSONArray jsonData = json.getJSONArray("data");
             int length = jsonData.length();

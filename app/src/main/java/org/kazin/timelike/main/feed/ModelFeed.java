@@ -3,6 +3,7 @@ package org.kazin.timelike.main.feed;
 import android.util.Log;
 
 import org.kazin.timelike.backend.BackendManager;
+import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
@@ -83,6 +84,7 @@ public class ModelFeed {
 
                 @Override
                 public void error(String error) {
+                    TimelikeApp.showToast("Feed load fail: "+error);
                     Log.d("apkapk","Error Logging instagram: "+error);
                 }
             });
@@ -135,6 +137,7 @@ public class ModelFeed {
 
                 @Override
                 public void error(String error) {
+                    TimelikeApp.showToast("Feed update load fail: "+error);
                     Log.d("apkapk", "Error Logging instagram: " + error);
                 }
             });

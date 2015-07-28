@@ -1,8 +1,10 @@
 package org.kazin.timelike.main.recent;
 
 import android.support.v4.app.Fragment;
+import android.widget.AbsListView;
 
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 
 import java.util.ArrayList;
 
@@ -59,5 +61,9 @@ public class PresenterRecent {
 
     public void updateFeed(ArrayList<ImageTimelike> image) {
         viewer.updateFeed(image);
+    }
+
+    public SimpleCallback getEndListListener() {
+        return model.getEndListListener();
     }
 }
