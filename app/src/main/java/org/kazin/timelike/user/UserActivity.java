@@ -1,7 +1,5 @@
 package org.kazin.timelike.user;
 
-import android.content.pm.ActivityInfo;
-import android.os.PersistableBundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -50,7 +48,7 @@ public class UserActivity extends ActionBarActivity {
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_blue_timelike, R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange_timelike, R.color.blue_medium_timelike);
 
         Button logoff = (Button) findViewById(R.id.log_off_fragment_recent);
         logoff.setVisibility(View.INVISIBLE);

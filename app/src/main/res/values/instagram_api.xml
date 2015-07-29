@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feed_user_instagram_api">/users/self/feed</string>
-    <string name="recent_feed_instagram_api">/users/self/media/recent</string>
-    <string name="user_feed_instagram_api_first_part">/users/</string>
-    <string name="user_feed_instagram_api_second_part">/media/recent</string>
+    <string name="feed_user_instagram_api" translatable="false">/users/self/feed</string>
+    <string name="recent_feed_instagram_api" translatable="false">/users/self/media/recent</string>
+    <string name="user_feed_instagram_api_first_part" translatable="false">/users/</string>
+    <string name="user_feed_instagram_api_second_part" translatable="false">/media/recent</string>
 </resources>

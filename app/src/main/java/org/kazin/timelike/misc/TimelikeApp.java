@@ -34,6 +34,6 @@ public class TimelikeApp extends Application {
     }
 
     public static void showToast(String message){
-        Toast.makeText(context, message,Toast.LENGTH_LONG);
+        Toast.makeText(context, message,Toast.LENGTH_LONG).show();
     }
 }

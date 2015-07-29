@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="choose_photo">ВЫбрать фоТО</string>
+    <string name="feed_title_section">Лента</string>
+    <string name="photo_title_section">Фото</string>
+    <string name="recent_title_section">профиль</string>
+    <string name="take_photo">СНять фоТО</string>
+    <string name="title_activity_user">Пользователь</string>
+</resources>

@@ -17,6 +17,7 @@ import com.nineoldandroids.animation.Animator;
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.EndlessScrollListener;
 import org.kazin.timelike.misc.FeedAdapter;
+import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 
 import java.util.ArrayList;
@@ -62,7 +63,8 @@ public class FragmentFeed extends Fragment{
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
         }
-        viewer.onLaunch();
+
+
         mFeedView.setOnScrollListener(new EndlessScrollListener(viewer.getEndFeedListener()));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -70,14 +72,22 @@ public class FragmentFeed extends Fragment{
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_blue_timelike, R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange_timelike, R.color.blue_medium_timelike);
 
         if(savedInstanceState!=null){
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
             setFeedAdapter(mFeedAdapter);
         }
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(viewer==null){
+            viewer = ViewerFeed.getInstance(fragment);
+        }
+        viewer.onLaunch();
     }
 
     @Override

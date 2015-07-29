@@ -81,7 +81,7 @@ public class FragmentRecent extends Fragment  {
                 viewer.onClickReload();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_blue_timelike, R.color.blue_medium_timelike);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange_timelike, R.color.blue_medium_timelike);
 
         logOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
