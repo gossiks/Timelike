@@ -162,4 +162,8 @@ public class ModelRecent {
             }
         };
     }
+
+    public void onLikeReceived(String imageId, long timelike) {
+        mBackend.saveTimelike(imageId, Math.abs(timelike / 1000));
+    }
 }

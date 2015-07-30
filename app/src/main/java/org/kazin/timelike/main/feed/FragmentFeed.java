@@ -75,6 +75,7 @@ public class FragmentFeed extends Fragment{
         mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange_timelike, R.color.blue_medium_timelike);
 
         if(savedInstanceState!=null){
+            savedInstanceState.setClassLoader(FeedAdapter.class.getClassLoader());
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
             setFeedAdapter(mFeedAdapter);
         }
@@ -132,14 +133,22 @@ public class FragmentFeed extends Fragment{
         private long timelike;
         private Button thisView;
         Animator.AnimatorListener animatorListener;
+        private SetTimelikeInterface viewer;
 
         private int lastMotionEvent;
         long systemtime;
 
-        public LikeListener(String imageId, Button thisView) {
+        /*public LikeListener(String imageId, Button thisView) {
             this.imageId = imageId;
             this.thisView = thisView;
             animatorListener = getAnimatorListener();
+        }*/
+
+        public LikeListener(String imageId, Button thisView, SetTimelikeInterface viewer) {
+            this.imageId = imageId;
+            this.thisView = thisView;
+            animatorListener = getAnimatorListener();
+            this.viewer = viewer;
         }
 
 
@@ -173,11 +182,10 @@ public class FragmentFeed extends Fragment{
                 }
 
                 stopWoble();
-                ViewerFeed viewerFeed = ViewerFeed.getInstance(null); //TODO. Can crush here if viewer is not initalized yet. (barely possible)
 
                 Log.d("apkapk", "LastDuration  time is: "+lastDuration +" LastDonw is: "+lastDown);
-                viewerFeed.setTimelike(imageId, lastDuration);
-                viewerFeed.onLikeReceived(imageId, lastDuration);
+                viewer.setTimelike(imageId, lastDuration);
+                viewer.onLikeReceived(imageId, lastDuration);
                 lastDown = System.currentTimeMillis();
                 v.getParent().requestDisallowInterceptTouchEvent(false);
                 //v.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(false);
@@ -223,6 +231,12 @@ public class FragmentFeed extends Fragment{
         private void stopWoble(){
             YoYo.with(Techniques.Wobble).playOn(thisView).stop(true);
         }
+    }
+
+    public interface SetTimelikeInterface{
+        void setTimelike(String imageId, long timelike);
+        void onLikeReceived(String imageId, long timelike);
+        int getViewerClassId();
     }
 
 }

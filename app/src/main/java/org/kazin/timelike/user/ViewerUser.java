@@ -6,6 +6,7 @@ import android.util.Log;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.backend.BackendManager;
+import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.main.recent.ModelRecent;
 import org.kazin.timelike.main.recent.ViewerRecent;
 import org.kazin.timelike.misc.RecentAdapter2;
@@ -19,11 +20,13 @@ import java.util.ArrayList;
 /**
  * Created by Alexey on 17.07.2015.
  */
-public class ViewerUser {
+public class ViewerUser implements FragmentFeed.SetTimelikeInterface{
 
     private static ViewerUser viewer;
     private static ModelUser model;
     private UserActivity activity;
+
+    public static final int VIEWER_USER_CLASS_ID = 3;
 
     public ViewerUser() {
 
@@ -58,7 +61,7 @@ public class ViewerUser {
 
 
     public void setUserFeed(ArrayList<ImageTimelike> mFeedLastState) {
-        activity.mFeedAdapter = new RecentAdapter2(activity, mFeedLastState);
+        activity.mFeedAdapter = new RecentAdapter2(activity, mFeedLastState, viewer);
         activity.mUserFeed.setAdapter(activity.mFeedAdapter);
 
         setUsername(mFeedLastState.get(0).getUsername());
@@ -92,5 +95,23 @@ public class ViewerUser {
     public void setAvatar(String avatarUrl){
         activity.mAvatarUrl = avatarUrl;
         Picasso.with(TimelikeApp.getContext()).load(activity.mAvatarUrl).into(activity.mAvatar);
+    }
+
+    @Override
+    public void setTimelike(String imageId, long timelike) {
+        ImageTimelike image = new ImageTimelike();
+        image.setImageId(imageId);
+        image.setTimelike(timelike/1000);
+        activity.mFeedAdapter.addTimelike(image);
+    }
+
+    @Override
+    public void onLikeReceived(String imageId, long timelike) {
+        model.onLikeReceived(imageId,timelike);
+    }
+
+    @Override
+    public int getViewerClassId() {
+        return VIEWER_USER_CLASS_ID;
     }
 }

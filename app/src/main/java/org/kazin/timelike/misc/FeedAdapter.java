@@ -33,8 +33,11 @@ import com.squareup.picasso.Picasso;
 import org.kazin.timelike.R;
 import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.main.feed.FragmentFeed;
+import org.kazin.timelike.main.feed.ViewerFeed;
+import org.kazin.timelike.main.recent.ViewerRecent;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.user.UserActivity;
+import org.kazin.timelike.user.ViewerUser;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -53,12 +56,18 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mImageOptions;
 
-    public FeedAdapter(Context context, ArrayList<ImageTimelike> images) {
+    private FragmentFeed.SetTimelikeInterface mViewer;
+    private int mViewerId;
+
+    public FeedAdapter(Context context, ArrayList<ImageTimelike> images, FragmentFeed.SetTimelikeInterface viewer) {
         if(context ==null){
             context = TimelikeApp.getContext();
         }
         mInflater = LayoutInflater.from(context);
         mContext = context;
+
+        mViewer = viewer;
+        mViewerId = mViewer.getViewerClassId();
 
         if(!ImageLoader.getInstance().isInited()){
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
@@ -70,7 +79,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         mImageLoader = ImageLoader.getInstance();
 
         mImageOptions = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).cacheInMemory(true).build();
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).build();
 
         mItems = images;
     }
@@ -112,7 +121,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderImage = (ViewHolderImage) convertView.getTag();
         }
 
-        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button));
+        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, mViewer));
 
         mImageLoader.displayImage(image.getImageUrl(), holderImage.image, mImageOptions);
         setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
@@ -405,6 +414,11 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
     //misc getters
 
+
+    public FragmentFeed.SetTimelikeInterface getViewer() {
+        return mViewer;
+    }
+
     public ArrayList<ImageTimelike> getItems() {
         return mItems;
     }
@@ -435,12 +449,31 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeList(this.mItems);
+        dest.writeInt(mViewerId);
     }
 
     private static FeedAdapter getFeedAdapter(Parcel in) {
         ArrayList<ImageTimelike> items = new ArrayList<ImageTimelike>();
         in.readList(items, List.class.getClassLoader());
-        return new FeedAdapter(TimelikeApp.getContext(), items);
+        int viewerId =  in.readInt();
+        return new FeedAdapter(TimelikeApp.getContext(), items, getViewer(viewerId));
+    }
+
+    private static FragmentFeed.SetTimelikeInterface getViewer(int viewerId) {
+        FragmentFeed.SetTimelikeInterface viewer = null;
+
+        switch (viewerId){
+            case ViewerFeed.VIEWER_FEED_CLASS_ID:
+                viewer = ViewerFeed.getInstance(null);
+                break;
+            case ViewerRecent.VIEWER_RECENT_CLASS_ID:
+                viewer = ViewerRecent.getInstance();
+                break;
+            case ViewerUser.VIEWER_USER_CLASS_ID:
+                viewer = ViewerUser.getInstance();
+                break;
+        }
+        return viewer;
     }
 
     public static final Creator<FeedAdapter> CREATOR = new Creator<FeedAdapter>() {

@@ -12,11 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by Alexey on 16.06.2015.
  */
-public class ViewerFeed {
+public class ViewerFeed implements FragmentFeed.SetTimelikeInterface {
 
     private static ViewerFeed viewer;
     private PresenterFeed presenter;
     private FragmentFeed fragment;
+    public final static int VIEWER_FEED_CLASS_ID = 1;
 
     private void setMVP(FragmentFeed fragment, ViewerFeed viewer){
         this.fragment = fragment;
@@ -46,6 +47,11 @@ public class ViewerFeed {
         presenter.onLikeReceived(imageid, timelike);
     }
 
+    @Override
+    public int getViewerClassId() {
+        return VIEWER_FEED_CLASS_ID;
+    }
+
     public void setFeed(ArrayList<ImageTimelike> feed){
         /*fragment.setFeedAdapter(FeedAdapter.getInstanceWithPinSections(TimelikeApp.getContext(),
                 R.layout.item_fragment_feed,
@@ -54,7 +60,7 @@ public class ViewerFeed {
                 R.layout.item_fragment_feed,
                 feed));*/
         fragment.setFeedAdapter(new FeedAdapter(TimelikeApp.getContext(),
-                feed));
+                feed, viewer));
     }
 
     public void setMessage(String message){

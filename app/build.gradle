@@ -14,8 +14,8 @@ android {
         applicationId "org.kazin.timelike"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 6
-        versionName "alpha_06"
+        versionCode 10
+        versionName "beta_00"
     }
     buildTypes {
         release {

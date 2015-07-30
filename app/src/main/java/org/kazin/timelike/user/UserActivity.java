@@ -58,6 +58,7 @@ public class UserActivity extends ActionBarActivity {
 
         mUserFeed.setOnScrollListener(new EndlessScrollListener(viewer.getEndFeedListener()));
         if(savedInstanceState!=null){
+            savedInstanceState.setClassLoader(RecentAdapter2.class.getClassLoader());
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE); //Store mFeedAdapter in bundle, because of better reliability comparing to viewer of model.
             viewer.setUserFeedAdapter(mFeedAdapter);
 

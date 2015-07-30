@@ -66,4 +66,8 @@ public class PresenterRecent {
     public SimpleCallback getEndListListener() {
         return model.getEndListListener();
     }
+
+    public void onLikeReceived(String imageId, long timelike) {
+        model.onLikeReceived(imageId, timelike);
+    }
 }

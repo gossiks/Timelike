@@ -94,6 +94,7 @@ public class FragmentRecent extends Fragment  {
         mConvertView = convertView;
 
         if(savedInstanceState!=null){
+            savedInstanceState.setClassLoader(RecentAdapter2.class.getClassLoader());
             mRecentAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
             setRecentFeed(mRecentAdapter);
         }
@@ -147,6 +148,13 @@ public class FragmentRecent extends Fragment  {
     public void updateFeed(ArrayList<ImageTimelike> image) {
         ((RecentAdapter2)mRecent.getAdapter()).addAll(image);
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void addTimelike(String imageId, long timelike) {
+        ImageTimelike image = new ImageTimelike();
+        image.setImageId(imageId);
+        image.setTimelike(timelike/1000);
+        ((RecentAdapter2)mRecent.getAdapter()).addTimelike(image);
     }
 
     //misc

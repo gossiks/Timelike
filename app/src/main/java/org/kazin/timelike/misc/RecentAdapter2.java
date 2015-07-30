@@ -18,8 +18,8 @@ import java.util.ArrayList;
  * Created by Alexey on 23.07.2015.
  */
 public class RecentAdapter2 extends FeedAdapter {
-    public RecentAdapter2(Context context, ArrayList<ImageTimelike> images) {
-        super(context, images);
+    public RecentAdapter2(Context context, ArrayList<ImageTimelike> images, FragmentFeed.SetTimelikeInterface viewer) {
+        super(context, images,viewer);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class RecentAdapter2 extends FeedAdapter {
             holderImage = (ViewHolderImage) convertView.getTag();
         }
 
-        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button));
+        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, getViewer()));
 
         getImageLoader().displayImage(image.getImageUrl(), holderImage.image, getImageOptions());
 
