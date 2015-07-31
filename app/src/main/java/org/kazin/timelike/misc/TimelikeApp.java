@@ -22,7 +22,7 @@ public class TimelikeApp extends Application {
         application = TimelikeApp.this;
 
         ParseCrashReporting.enable(this);
-        Parse.initialize(this, "vkOmdpKK7NAw6MOL1zXZrSGdZ69QtbV05NwpHV9G", "8MBAp9Rs8vYBLjOzjVOt60B7G8U731OhYWg2oJkz");
+        Parse.initialize(this, "jqrRDEEsCiobRhnVHTjMLTLc8nZkUoIIWeCdHLb6", "ZBVY4VXhGbkOMwd7CeBvQO7sU3E0jEG0Of0uH5WM");
     }
 
     public static Context getContext() {

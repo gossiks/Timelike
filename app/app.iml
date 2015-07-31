@@ -76,6 +76,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.AlbertGrobas/MovingImageView/381fddac64/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.joooonho/selectableroundedimageview/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.kbeanie/image-chooser-library/1.4.4/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.skyfishjy.ripplebackground/library/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/se.emilsjolander/stickylistheaders/2.7.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jacoco" />
@@ -95,6 +96,7 @@
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="library-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="1_library-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="selectableroundedimageview-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="image-chooser-library-1.4.4" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />

@@ -7,21 +7,34 @@ repositories {
 }
 
 android {
+    signingConfigs {
+        release_key {
+            keyAlias 'timelike'
+            keyPassword 'tkmspotr3qi'
+            storeFile file('D:/Android/tools/keys/kazin/kazin.keystore.jks')
+            storePassword 'kkmspotr3qa'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "org.kazin.timelike"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 10
         versionName "beta_00"
+        signingConfig signingConfigs.release_key
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            signingConfig signingConfigs.release_key
+        }
+    }
+    productFlavors {
     }
 }
 
@@ -42,7 +55,6 @@ dependencies {
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
     compile 'com.firebase:firebase-client-android:2.3.1+'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
-
     //for animations
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.easing:library:1.0.1@aar'
@@ -50,5 +62,6 @@ dependencies {
     compile 'com.kbeanie:image-chooser-library:1.4.4@aar'
     compile 'com.github.AlbertGrobas:MovingImageView:381fddac64'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
+    compile 'com.skyfishjy.ripplebackground:library:1.0.1'
     testCompile 'junit:junit:4.12'
 }

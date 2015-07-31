@@ -28,6 +28,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
@@ -79,7 +80,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         mImageLoader = ImageLoader.getInstance();
 
         mImageOptions = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).build();
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).cacheInMemory(true).build();
 
         mItems = images;
     }
@@ -114,6 +115,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderImage.comments.setExpanded(true);
 
             holderImage.like_button = (Button) convertView.findViewById(R.id.like_image_item_user_fragment_feed);
+            holderImage.ripple_like = (RippleBackground) convertView.findViewById(R.id.ripple_like_button_feed_adapter);
 
             convertView.setTag(holderImage);
         }
@@ -121,7 +123,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderImage = (ViewHolderImage) convertView.getTag();
         }
 
-        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, mViewer));
+        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, mViewer, holderImage.ripple_like));
 
         mImageLoader.displayImage(image.getImageUrl(), holderImage.image, mImageOptions);
         setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
@@ -252,6 +254,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         TextView description;
         Button like_button;
         ExpandableHeightListView comments;
+        RippleBackground ripple_like;
     }
 
     private class ViewHolderHeader {
@@ -308,7 +311,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
 
         if(timelike<1*1000){
-            timelikeCrop = noDigit.format(timelike)+" sec";
+            timelikeCrop = noDigit.format(timelike)+" "+mContext.getString(R.string.seconds_feed_adapter);
         } else
         if (timelike<1000*1000){
             timelikeCrop = twoDigit.format(timelike / 1000)+"k";

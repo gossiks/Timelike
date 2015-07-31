@@ -19,5 +19,6 @@
     <string name="title_activity_user">User</string>
     <string name="take_photo">TAke phOTO</string>
     <string name="choose_photo">Choose phOTO</string>
+    <string name="seconds_feed_adapter"> s</string>
 
 </resources>

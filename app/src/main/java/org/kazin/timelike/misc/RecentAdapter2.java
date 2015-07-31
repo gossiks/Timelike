@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.skyfishjy.library.RippleBackground;
+
 import org.kazin.timelike.R;
 import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.object.ImageTimelike;
@@ -36,6 +38,7 @@ public class RecentAdapter2 extends FeedAdapter {
             holderImage.comments.setExpanded(true);
 
             holderImage.like_button = (Button) convertView.findViewById(R.id.like_image_item_user_fragment_feed);
+            holderImage.ripple = (RippleBackground) convertView.findViewById(R.id.ripple_like_button_feed_adapter);
 
             convertView.setTag(holderImage);
         }
@@ -43,7 +46,7 @@ public class RecentAdapter2 extends FeedAdapter {
             holderImage = (ViewHolderImage) convertView.getTag();
         }
 
-        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, getViewer()));
+        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, getViewer(), holderImage.ripple));
 
         getImageLoader().displayImage(image.getImageUrl(), holderImage.image, getImageOptions());
 
@@ -73,5 +76,6 @@ public class RecentAdapter2 extends FeedAdapter {
         TextView description;
         Button like_button;
         ExpandableHeightListView comments;
+        RippleBackground ripple;
     }
 }

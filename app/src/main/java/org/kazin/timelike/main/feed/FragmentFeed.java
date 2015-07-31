@@ -13,6 +13,7 @@ import android.widget.Button;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nineoldandroids.animation.Animator;
+import com.skyfishjy.library.RippleBackground;
 
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.EndlessScrollListener;
@@ -134,6 +135,7 @@ public class FragmentFeed extends Fragment{
         private Button thisView;
         Animator.AnimatorListener animatorListener;
         private SetTimelikeInterface viewer;
+        private RippleBackground ripple;
 
         private int lastMotionEvent;
         long systemtime;
@@ -151,6 +153,13 @@ public class FragmentFeed extends Fragment{
             this.viewer = viewer;
         }
 
+        public LikeListener(String imageId, Button thisView, SetTimelikeInterface viewer, RippleBackground ripple) {
+            this.imageId = imageId;
+            this.thisView = thisView;
+            animatorListener = getAnimatorListener();
+            this.viewer = viewer;
+            this.ripple = ripple;
+        }
 
 
         @Override
@@ -161,7 +170,7 @@ public class FragmentFeed extends Fragment{
                 lastDown = System.currentTimeMillis();
                 v.getParent().requestDisallowInterceptTouchEvent(true); //remember this works only for this amount of parents
                 //v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
-
+                ripple.startRippleAnimation();
                 showWoble();
             } else if(lastMotionEvent!=MotionEvent.ACTION_MOVE){
                 /*if(lastMotionEvent == MotionEvent.ACTION_CANCEL|lastMotionEvent == MotionEvent.ACTION_MOVE){
@@ -170,6 +179,8 @@ public class FragmentFeed extends Fragment{
                 systemtime = System.currentTimeMillis();
                 //Log.d("apkapk", "System time is: "+systemtime );
 
+                ripple.stopRippleAnimation();
+                stopWoble();
                 lastDuration = systemtime - lastDown;
                 if (lastDown==0){
                     return false;
@@ -181,7 +192,6 @@ public class FragmentFeed extends Fragment{
                     lastDuration = 1000;
                 }
 
-                stopWoble();
 
                 Log.d("apkapk", "LastDuration  time is: "+lastDuration +" LastDonw is: "+lastDown);
                 viewer.setTimelike(imageId, lastDuration);
@@ -194,7 +204,9 @@ public class FragmentFeed extends Fragment{
         }
 
         private void showWoble(){
-            YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView);
+            if(!YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView).isRunning()){
+                YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView);
+            }
         }
 
         private Animator.AnimatorListener getAnimatorListener(){
