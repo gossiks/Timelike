@@ -1,7 +1,13 @@
 package org.kazin.timelike.main.recent;
 
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.AbsListView;
+
+import com.example.androidlicensespage.LicensesFragment;
 
 import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.backend.BackendManager;
@@ -165,5 +171,11 @@ public class ModelRecent {
 
     public void onLikeReceived(String imageId, long timelike) {
         mBackend.saveTimelike(imageId, Math.abs(timelike / 1000));
+    }
+
+    public void onClickLicense() {
+        android.support.v4.app.FragmentTransaction ft = ((ActionBarActivity) MainActivity.getMainActivity()).getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.DialogFragment dialog = LicensesFragment.newInstance();
+        dialog.show(ft, "About Timelike");
     }
 }

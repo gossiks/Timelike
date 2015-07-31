@@ -31,9 +31,8 @@
         android:textAllCaps="false"
         android:id="@+id/log_off_fragment_recent"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/view" />
+        android:layout_toLeftOf="@+id/license_button_fragment_recent"
+        android:layout_toStartOf="@+id/license_button_fragment_recent" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="wrap_content"
@@ -66,5 +65,18 @@
         app:sriv_oval="true"
         android:layout_width="50dp"
         android:layout_height="50dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:padding="0dp"
+        android:background="@color/transparent"
+        android:text="about"
+        android:textColor="@color/white_textColorPrimary_timelike"
+        android:textAllCaps="false"
+        android:id="@+id/license_button_fragment_recent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

@@ -70,4 +70,8 @@ public class PresenterRecent {
     public void onLikeReceived(String imageId, long timelike) {
         model.onLikeReceived(imageId, timelike);
     }
+
+    public void onClickLicense() {
+        model.onClickLicense();
+    }
 }

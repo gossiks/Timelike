@@ -98,4 +98,8 @@ public class ViewerRecent implements FragmentFeed.SetTimelikeInterface{
     public int getViewerClassId() {
         return VIEWER_RECENT_CLASS_ID;
     }
+
+    public void onClickLicense() {
+        presenter.onClickLicense();
+    }
 }

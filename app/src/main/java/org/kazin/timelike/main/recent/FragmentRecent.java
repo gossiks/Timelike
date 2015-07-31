@@ -72,6 +72,7 @@ public class FragmentRecent extends Fragment  {
         mUsername = (TextView) convertView.findViewById(R.id.username_item_user_fragment_recent);
         mSwipeRefreshLayout = (SwipeRefreshLayout) convertView.findViewById(R.id.recent_pull_to_refresh);
         Button logOffButton = (Button) convertView.findViewById(R.id.log_off_fragment_recent);
+        Button licenseButton = (Button) convertView.findViewById(R.id.license_button_fragment_recent);
 
         mRecent.setOnScrollListener(new EndlessScrollListener(viewer.getEndListListener()));
 
@@ -89,7 +90,12 @@ public class FragmentRecent extends Fragment  {
                 viewer.onClickLogOff();
             }
         });
-
+        licenseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewer.onClickLicense();
+            }
+        });
 
         mConvertView = convertView;
 
