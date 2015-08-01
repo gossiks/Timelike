@@ -38,6 +38,7 @@ public class FragmentFeed extends Fragment{
 
     private final String ADAPTER_SAVE_INSTANCE = "adapter";
     private FeedAdapter mFeedAdapter;
+    private RippleBackground mRippleBackground;
 
     private void setMVP(FragmentFeed fragment){
         viewer = ViewerFeed.getInstance(fragment);
@@ -60,6 +61,7 @@ public class FragmentFeed extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         mFeedView = (StickyListHeadersListView) rootView.findViewById(R.id.feed_listview);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_pull_to_refresh);
+        mRippleBackground = (RippleBackground) rootView.findViewById(R.id.ripple_feed_fragment);
 
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
@@ -75,6 +77,7 @@ public class FragmentFeed extends Fragment{
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange_timelike, R.color.blue_medium_timelike);
 
+
         if(savedInstanceState!=null){
             savedInstanceState.setClassLoader(FeedAdapter.class.getClassLoader());
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
@@ -89,6 +92,7 @@ public class FragmentFeed extends Fragment{
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
         }
+        mRippleBackground.startRippleAnimation();
         viewer.onLaunch();
     }
 
@@ -104,6 +108,7 @@ public class FragmentFeed extends Fragment{
         mFeedAdapter = adapter;
         mFeedView.setAdapter(adapter);
         mSwipeRefreshLayout.setRefreshing(false);
+        mRippleBackground.stopRippleAnimation();
     }
 
     public void setTimelike(ImageTimelike image) {
@@ -131,32 +136,18 @@ public class FragmentFeed extends Fragment{
         private long lastDuration;
 
         private String imageId;
-        private long timelike;
         private Button thisView;
-        Animator.AnimatorListener animatorListener;
+        //Animator.AnimatorListener animatorListener;
         private SetTimelikeInterface viewer;
         private RippleBackground ripple;
 
         private int lastMotionEvent;
         long systemtime;
 
-        /*public LikeListener(String imageId, Button thisView) {
-            this.imageId = imageId;
-            this.thisView = thisView;
-            animatorListener = getAnimatorListener();
-        }*/
-
-        public LikeListener(String imageId, Button thisView, SetTimelikeInterface viewer) {
-            this.imageId = imageId;
-            this.thisView = thisView;
-            animatorListener = getAnimatorListener();
-            this.viewer = viewer;
-        }
-
         public LikeListener(String imageId, Button thisView, SetTimelikeInterface viewer, RippleBackground ripple) {
             this.imageId = imageId;
             this.thisView = thisView;
-            animatorListener = getAnimatorListener();
+            //animatorListener = getAnimatorListener();
             this.viewer = viewer;
             this.ripple = ripple;
         }
@@ -180,7 +171,9 @@ public class FragmentFeed extends Fragment{
                 //Log.d("apkapk", "System time is: "+systemtime );
 
                 ripple.stopRippleAnimation();
-                stopWoble();
+                //stopWoble();
+
+
                 lastDuration = systemtime - lastDown;
                 if (lastDown==0){
                     return false;
@@ -204,9 +197,13 @@ public class FragmentFeed extends Fragment{
         }
 
         private void showWoble(){
-            if(!YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView).isRunning()){
-                YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView);
+            if(!YoYo.with(Techniques.RubberBand).duration(1500).playOn(thisView).isRunning()){
+                YoYo.with(Techniques.RubberBand).duration(1500).playOn(thisView);
             }
+
+            /*if(!YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView).isRunning()){
+                YoYo.with(Techniques.RubberBand).duration(1500).withListener(animatorListener).playOn(thisView);
+            }*/
         }
 
         private Animator.AnimatorListener getAnimatorListener(){
@@ -217,13 +214,15 @@ public class FragmentFeed extends Fragment{
                 }
 
                 @Override
-                public void onAnimationEnd(Animator animation) { //todo clear
+                public void onAnimationEnd(Animator animation) {
                     if (lastMotionEvent == MotionEvent.ACTION_DOWN | lastMotionEvent == MotionEvent.ACTION_MOVE) {
-                        showWoble();
+                        //showWoble();
+                        animation.start();
                     }
 
                     if (lastMotionEvent == MotionEvent.ACTION_CANCEL | lastMotionEvent == MotionEvent.ACTION_UP) {
-                        stopWoble();
+                        //stopWoble();
+                        animation.cancel();
                     }
                 }
 
@@ -237,11 +236,6 @@ public class FragmentFeed extends Fragment{
 
                 }
             };
-        }
-
-
-        private void stopWoble(){
-            YoYo.with(Techniques.Wobble).playOn(thisView).stop(true);
         }
     }
 

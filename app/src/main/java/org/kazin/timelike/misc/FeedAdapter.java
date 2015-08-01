@@ -457,7 +457,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
     private static FeedAdapter getFeedAdapter(Parcel in) {
         ArrayList<ImageTimelike> items = new ArrayList<ImageTimelike>();
-        in.readList(items, List.class.getClassLoader());
+        in.readList(items, ImageTimelike.class.getClassLoader());
         int viewerId =  in.readInt();
         return new FeedAdapter(TimelikeApp.getContext(), items, getViewer(viewerId));
     }

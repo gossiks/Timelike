@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white_textColorPrimary_timelike"
     android:id="@+id/fragment_recent"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <View style="@style/TimelikeTheme.Divider"
         android:id="@+id/view" />
 
@@ -78,5 +80,21 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <com.skyfishjy.library.RippleBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ripple_recent_fragment"
+        app:rb_color="@color/blue_dark_timelike"
+        app:rb_radius="10dp"
+        app:rb_rippleAmount="4"
+        app:rb_duration="1000"
+        app:rb_scale="3"
+        android:layout_below="@+id/image_feed_item"
+
+        >
+
+
+    </com.skyfishjy.library.RippleBackground>
 
 </RelativeLayout>

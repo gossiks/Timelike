@@ -1,19 +1,12 @@
 package org.kazin.timelike.user;
 
-import android.support.v4.app.Fragment;
-import android.util.Log;
-
 import com.squareup.picasso.Picasso;
 
-import org.kazin.timelike.backend.BackendManager;
 import org.kazin.timelike.main.feed.FragmentFeed;
-import org.kazin.timelike.main.recent.ModelRecent;
-import org.kazin.timelike.main.recent.ViewerRecent;
 import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;
-import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
 
@@ -48,6 +41,7 @@ public class ViewerUser implements FragmentFeed.SetTimelikeInterface{
 
 
     public void onLaunch(String username) {
+        activity.mRippleBackground.startRippleAnimation();
         model.onLaunch(username);
     }
 
@@ -66,6 +60,7 @@ public class ViewerUser implements FragmentFeed.SetTimelikeInterface{
 
         setUsername(mFeedLastState.get(0).getUsername());
         setAvatar(mFeedLastState.get(0).getAvatarUrl());
+        activity.mRippleBackground.stopRippleAnimation();
         activity.mSwipeRefreshLayout.setRefreshing(false);
     }
 
@@ -89,7 +84,7 @@ public class ViewerUser implements FragmentFeed.SetTimelikeInterface{
 
     public void setUsername(String username){
         activity.mUsernameString = username;
-        activity.mUsername.setText(activity.mUsernameString);
+        activity.mUsernameTextView.setText(activity.mUsernameString);
     }
 
     public void setAvatar(String avatarUrl){

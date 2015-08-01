@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.joooonho.SelectableRoundedImageView;
+import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
@@ -40,7 +41,7 @@ public class FragmentRecent extends Fragment  {
 
    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecentAdapter2 mRecentAdapter;
-    private View mConvertView;
+    private RippleBackground mRippleBackground;
 
     private void setMVP(FragmentRecent fragment){
        viewer = ViewerRecent.getInstance(fragment);
@@ -71,6 +72,8 @@ public class FragmentRecent extends Fragment  {
         mRecent = (ListView) convertView.findViewById(R.id.recent_feed_fragment_fragment_recent);
         mUsername = (TextView) convertView.findViewById(R.id.username_item_user_fragment_recent);
         mSwipeRefreshLayout = (SwipeRefreshLayout) convertView.findViewById(R.id.recent_pull_to_refresh);
+        mRippleBackground = (RippleBackground) convertView.findViewById(R.id.ripple_recent_fragment);
+
         Button logOffButton = (Button) convertView.findViewById(R.id.log_off_fragment_recent);
         Button licenseButton = (Button) convertView.findViewById(R.id.license_button_fragment_recent);
 
@@ -97,8 +100,6 @@ public class FragmentRecent extends Fragment  {
             }
         });
 
-        mConvertView = convertView;
-
         if(savedInstanceState!=null){
             savedInstanceState.setClassLoader(RecentAdapter2.class.getClassLoader());
             mRecentAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
@@ -124,6 +125,7 @@ public class FragmentRecent extends Fragment  {
         if(viewer==null){
             viewer = ViewerRecent.getInstance(this);
         }
+        mRippleBackground.startRippleAnimation();
         viewer.onLaunch();
     }
 
@@ -138,11 +140,13 @@ public class FragmentRecent extends Fragment  {
     public void setRecentFeed(RecentAdapter2 adapter){
         mRecentAdapter = adapter;
         mRecent.setAdapter(adapter);
+        mRippleBackground.stopRippleAnimation();
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public void setRecentFeedAdapterOld(){
         mRecent.setAdapter(mRecentAdapter);
+        mRippleBackground.stopRippleAnimation();
         mSwipeRefreshLayout.setRefreshing(false);
     }
 

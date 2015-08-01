@@ -51,10 +51,10 @@ public class ModelUser   {
 
     private void loadFeed(boolean reload){
         if(mBackend.checkInstLoggedIn()){
-            if(mFeedLastState!=null && !reload){
+            /*if(mFeedLastState!=null && !reload){
                 viewer.setUserFeed(mFeedLastState);
                 return;
-            }
+            }*/
             mBackend.getUserFeed(mUserId, new BackendManager.GetFeedClk() {
                 @Override
                 public void success(ArrayList<ImageTimelike> feed) {

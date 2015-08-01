@@ -25,9 +25,6 @@ public class BackendManager {
         mContext = TimelikeApp.getContext();
         mFireManager2 = new FireManager();
         mInstagramManager = InstagramManager.getInstance();
-
-
-
     }
 
     public static BackendManager getInstance(){
