@@ -12,8 +12,10 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -60,6 +62,8 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     private FragmentFeed.SetTimelikeInterface mViewer;
     private int mViewerId;
 
+    private int mTagColor;
+
     public FeedAdapter(Context context, ArrayList<ImageTimelike> images, FragmentFeed.SetTimelikeInterface viewer) {
         if(context ==null){
             context = TimelikeApp.getContext();
@@ -76,6 +80,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         }
 
 
+        mTagColor = mContext.getResources().getColor(R.color.blue_medium_timelike);
 
         mImageLoader = ImageLoader.getInstance();
 
@@ -133,10 +138,11 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         }
         else{
 
-            holderImage.comments.setAdapter(new ArrayAdapter<>(mContext
-                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3)));//3 - because who cares about other comments.
+            holderImage.comments.setAdapter(new ArrayAdapterWithTags(mContext
+                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3), image, mViewer));//3 - because who cares about other comments.
 
-            setListViewHeightBasedOnItems(holderImage.comments);
+            //setListViewHeightBasedOnItems(holderImage.comments);
+
         }
 
 
@@ -166,9 +172,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         holderHeader.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, UserActivity.class);
-                intent.putExtra(UserActivity.USERNAME_USERACTIVITY_EXTRAS, user.getUserId());
-                MainActivity.getMainActivity().startActivity(intent);
+                mViewer.navigateToUserActivity(user.getUserId());
             }
         });
         holderHeader.username.setText(user.getUsername());
@@ -347,7 +351,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
 
 
-    public void setTags(TextView pTextView, String pTagString) {
+    public void setTags(TextView pTextView, final String pTagString) {
         SpannableString string = new SpannableString(pTagString);
 
         int start = -1;
@@ -372,7 +376,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
                         @Override
                         public void updateDrawState(TextPaint ds) {
                             // link color
-                            ds.setColor(Color.parseColor("#33b5e5"));
+                            ds.setColor(mTagColor);
                             ds.setUnderlineText(false);
                         }
                     }, start, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -391,18 +395,18 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
                         // space after
                     }
 
-                    final String tag = pTagString.substring(start, i);
+                    //final String tag = pTagString.substring(start, i); //very rarely involves StringIndexOutOfBoundsException, so deprecated.
                     string.setSpan(new ClickableSpan() {
 
                         @Override
                         public void onClick(View widget) {
-                            Log.d("Hash", String.format("Clicked %s!", tag));
+                            Log.d("Hash", String.format("Clicked %s!", pTagString));
                         }
 
                         @Override
                         public void updateDrawState(TextPaint ds) {
                             // link color
-                            ds.setColor(Color.parseColor("#33b5e5"));
+                            ds.setColor(mTagColor);
                             ds.setUnderlineText(false);
                         }
                     }, start, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

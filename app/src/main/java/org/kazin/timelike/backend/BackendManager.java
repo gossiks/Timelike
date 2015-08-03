@@ -7,6 +7,7 @@ import com.parse.ParseCrashReporting;
 
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
@@ -49,6 +50,14 @@ public class BackendManager {
     public void getRecentUpdate(GetFeedClk callback){
         mInstagramManager.getRecentUpdate(callback);
     }
+
+    public void getComments(String imageId, SimpleCallback callback){
+        mInstagramManager.getComments(imageId, callback);
+    }
+
+
+
+
 
     public void testUpdateFeed(){
         mInstagramManager.testUpdateFeed();

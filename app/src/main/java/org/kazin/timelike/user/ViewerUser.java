@@ -1,7 +1,11 @@
 package org.kazin.timelike.user;
 
+import android.content.Intent;
+
 import com.squareup.picasso.Picasso;
 
+import org.kazin.timelike.comments.UserCommentsActivity;
+import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
@@ -102,11 +106,25 @@ public class ViewerUser implements FragmentFeed.SetTimelikeInterface{
 
     @Override
     public void onLikeReceived(String imageId, long timelike) {
-        model.onLikeReceived(imageId,timelike);
+        model.onLikeReceived(imageId, timelike);
     }
 
     @Override
     public int getViewerClassId() {
         return VIEWER_USER_CLASS_ID;
+    }
+
+    @Override
+    public void navigateToUserActivity(String userId) {
+        Intent intent = new Intent(MainActivity.getMainActivity(), UserActivity.class);
+        intent.putExtra(UserActivity.USERID_USERACTIVITY_EXTRAS, userId);
+        MainActivity.getMainActivity().startActivity(intent);
+    }
+
+    @Override
+    public void navigateToComments(ImageTimelike image) {
+        Intent intent = new Intent(MainActivity.getMainActivity(), UserCommentsActivity.class);
+        intent.putExtra(UserCommentsActivity.IMAGE_USERCOMMENTSACTIVITY_EXTRAS, image);
+        MainActivity.getMainActivity().startActivity(intent);
     }
 }

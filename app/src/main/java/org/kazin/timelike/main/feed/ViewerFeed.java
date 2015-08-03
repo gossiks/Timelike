@@ -1,11 +1,15 @@
 package org.kazin.timelike.main.feed;
 
+import android.content.Intent;
 import android.widget.Toast;
 
+import org.kazin.timelike.comments.UserCommentsActivity;
+import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.misc.FeedAdapter;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;
+import org.kazin.timelike.user.UserActivity;
 
 import java.util.ArrayList;
 
@@ -50,6 +54,20 @@ public class ViewerFeed implements FragmentFeed.SetTimelikeInterface {
     @Override
     public int getViewerClassId() {
         return VIEWER_FEED_CLASS_ID;
+    }
+
+    @Override
+    public void navigateToUserActivity(String userId) {
+        Intent intent = new Intent(MainActivity.getMainActivity(), UserActivity.class);
+        intent.putExtra(UserActivity.USERID_USERACTIVITY_EXTRAS, userId);
+        MainActivity.getMainActivity().startActivity(intent);
+    }
+
+    @Override
+    public void navigateToComments(ImageTimelike image) {
+        Intent intent = new Intent(TimelikeApp.getContext(), UserCommentsActivity.class);
+        intent.putExtra(UserCommentsActivity.IMAGE_USERCOMMENTSACTIVITY_EXTRAS, image);
+        MainActivity.getMainActivity().startActivity(intent);
     }
 
     public void setFeed(ArrayList<ImageTimelike> feed){

@@ -1,6 +1,5 @@
 package org.kazin.timelike.user;
 
-import android.content.pm.ActivityInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import org.kazin.timelike.misc.RecentAdapter2;
 
 public class UserActivity extends ActionBarActivity {
 
-    public static final String USERNAME_USERACTIVITY_EXTRAS = "username";
+    public static final String USERID_USERACTIVITY_EXTRAS = "username";
     public static final String AVATAR_URL_USERACTIVITY_EXTRAS = "avatar";
     private final String ADAPTER_SAVE_INSTANCE = "adapter";
 
@@ -73,17 +72,17 @@ public class UserActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //viewer.onLaunch(getIntent().getStringExtra(USERNAME_USERACTIVITY_EXTRAS));
+        //viewer.onCreate(getIntent().getStringExtra(USERID_USERACTIVITY_EXTRAS));
         if(mSavedInstanceState!=null){
             mSavedInstanceState.setClassLoader(RecentAdapter2.class.getClassLoader());
             mFeedAdapter = mSavedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE); //Store mFeedAdapter in bundle, because of better reliability comparing to viewer of model.
             viewer.setUserFeedAdapter(mFeedAdapter);
 
-            viewer.setUsername(mSavedInstanceState.getString(USERNAME_USERACTIVITY_EXTRAS));
+            viewer.setUsername(mSavedInstanceState.getString(USERID_USERACTIVITY_EXTRAS));
             viewer.setAvatar(mSavedInstanceState.getString(AVATAR_URL_USERACTIVITY_EXTRAS));
         }
         else {
-            viewer.onLaunch(getIntent().getStringExtra(USERNAME_USERACTIVITY_EXTRAS));
+            viewer.onLaunch(getIntent().getStringExtra(USERID_USERACTIVITY_EXTRAS));
         }
     }
 
@@ -92,7 +91,7 @@ public class UserActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         if(mFeedAdapter!=null){
             outState.putParcelable(ADAPTER_SAVE_INSTANCE , mFeedAdapter);
-            outState.putString(USERNAME_USERACTIVITY_EXTRAS, mUsernameString);
+            outState.putString(USERID_USERACTIVITY_EXTRAS, mUsernameString);
             outState.putString(AVATAR_URL_USERACTIVITY_EXTRAS, mAvatarUrl);
         }
     }

@@ -18,6 +18,7 @@ import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.R;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.object.SimpleCallback;
 import org.kazin.timelike.object.UserTimelike;
 
 import java.util.ArrayList;
@@ -280,6 +281,31 @@ public class InstagramManager {
         return userTL;
     }
 
+    public void getComments(String imageId, final SimpleCallback callback) {
+        List<NameValuePair> params = new ArrayList<>();
+        //params.add(new BasicNameValuePair("count", "20"));
+        InstagramRequest request = new InstagramRequest(mInstagramSession.getAccessToken());
+
+        String endpoint = mContext.getString(R.string.user_comments_instagram_api_first_part)+imageId
+                +mContext.getString(R.string.user_comments_instagram_api_second_part);
+        request.createRequest("GET", endpoint, params, new InstagramRequest.InstagramRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                if (!response.equals("")) {
+                    ArrayList<ImageTimelike.Comment> comments = parseComments(response);
+                    callback.success(comments);
+                } else {
+                    callback.fail("empty response");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.fail(error);
+            }
+        });
+    }
+
 
 
     //misc methods
@@ -347,6 +373,16 @@ public class InstagramManager {
         }
     }
 
+    private ArrayList<ImageTimelike.Comment> parseComments(String response){
+        try {
+            return parseComments(
+                    (JSONObject)new JSONTokener(response).nextValue());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private ArrayList<ImageTimelike.Comment> parseComments(JSONObject json) throws JSONException {
         JSONArray comments = json.getJSONArray("data");
         JSONObject cmnt;
@@ -357,7 +393,7 @@ public class InstagramManager {
             ImageTimelike.Comment comment;
             comment = new ImageTimelike.Comment(cmnt.getJSONObject("from").getString("username"),
                     cmnt.getJSONObject("from").getString("profile_picture"),
-                    cmnt.getString("text"), cmnt.getLong("created_time"));
+                    cmnt.getString("text"), cmnt.getJSONObject("from").getString("id"), cmnt.getLong("created_time"));
             response.add(comment);
         }
         return response;
@@ -367,6 +403,7 @@ public class InstagramManager {
     public void logOff() {
         mInstagramSession.reset();
     }
+
 
 
 }

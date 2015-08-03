@@ -57,10 +57,10 @@ public class RecentAdapter2 extends FeedAdapter {
         }
         else{
 
-            holderImage.comments.setAdapter(new ArrayAdapter<>(getContext()
-                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3)));//3 - because who cares about other comments.
+            holderImage.comments.setAdapter(new ArrayAdapterWithTags(getContext()
+                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3), image,getViewer()));//3 - because who cares about other comments.
 
-            setListViewHeightBasedOnItems(holderImage.comments);
+            //setListViewHeightBasedOnItems(holderImage.comments);
         }
 
 

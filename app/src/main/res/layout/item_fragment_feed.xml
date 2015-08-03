@@ -38,6 +38,7 @@
         android:id="@+id/comments_feed_item_user_fragment"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:layout_marginRight="60dp"
         android:cacheColorHint="#00000000"
         android:fadingEdge="none"
         android:focusable="false"

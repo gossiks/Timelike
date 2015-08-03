@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -93,6 +94,7 @@ public class FragmentFeed extends Fragment{
             viewer = ViewerFeed.getInstance(fragment);
         }
         mRippleBackground.startRippleAnimation();
+
         viewer.onLaunch();
     }
 
@@ -243,6 +245,10 @@ public class FragmentFeed extends Fragment{
         void setTimelike(String imageId, long timelike);
         void onLikeReceived(String imageId, long timelike);
         int getViewerClassId();
+
+        void navigateToUserActivity(String userId);
+
+        void navigateToComments(ImageTimelike mImage);
     }
 
 }

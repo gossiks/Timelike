@@ -4,4 +4,6 @@
     <string name="recent_feed_instagram_api" translatable="false">/users/self/media/recent</string>
     <string name="user_feed_instagram_api_first_part" translatable="false">/users/</string>
     <string name="user_feed_instagram_api_second_part" translatable="false">/media/recent</string>
+    <string name="user_comments_instagram_api_first_part" translatable="false">/media/</string>
+    <string name="user_comments_instagram_api_second_part" translatable="false">/comments</string>
 </resources>

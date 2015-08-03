@@ -1,15 +1,18 @@
 package org.kazin.timelike.main.recent;
 
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.AbsListView;
 
+import org.kazin.timelike.comments.UserCommentsActivity;
+import org.kazin.timelike.main.MainActivity;
 import org.kazin.timelike.main.feed.FragmentFeed;
 import org.kazin.timelike.misc.RecentAdapter2;
 import org.kazin.timelike.misc.TimelikeApp;
 import org.kazin.timelike.object.ImageTimelike;
 import org.kazin.timelike.object.SimpleCallback;
+import org.kazin.timelike.user.UserActivity;
 
 import java.util.ArrayList;
 
@@ -101,5 +104,19 @@ public class ViewerRecent implements FragmentFeed.SetTimelikeInterface{
 
     public void onClickLicense() {
         presenter.onClickLicense();
+    }
+
+    @Override
+    public void navigateToUserActivity(String userId) {
+        Intent intent = new Intent(MainActivity.getMainActivity(), UserActivity.class);
+        intent.putExtra(UserActivity.USERID_USERACTIVITY_EXTRAS, userId);
+        MainActivity.getMainActivity().startActivity(intent);
+    }
+
+    @Override
+    public void navigateToComments(ImageTimelike image) {
+        Intent intent = new Intent(MainActivity.getMainActivity(), UserCommentsActivity.class);
+        intent.putExtra(UserCommentsActivity.IMAGE_USERCOMMENTSACTIVITY_EXTRAS, image);
+        MainActivity.getMainActivity().startActivity(intent);
     }
 }

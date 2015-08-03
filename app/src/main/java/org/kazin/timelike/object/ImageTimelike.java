@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,6 +26,8 @@ public class ImageTimelike implements Parcelable{
     long timelike;
     String type = TYPE_IMAGE;
     ArrayList<Comment> comments=null;
+
+    private HashMap<String, String> hashUsernameVsId;
 
     private boolean isPinned = false;
 
@@ -57,7 +60,7 @@ public class ImageTimelike implements Parcelable{
         this.description = description;
         this.timelike = timelike;
         this.type = type;
-        this.comments = comments;
+        setComments(comments);
     }
 
     public void setImageUrl(String imageUrl) {
@@ -126,6 +129,18 @@ public class ImageTimelike implements Parcelable{
         return comments;
     }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+        hashUsernameVsId = new HashMap<>();
+        for (Comment c: comments){
+            hashUsernameVsId.put(c.getUsername(), c.getUserId());
+        }
+    }
+
+    public String getIdByUsername(String username){
+        return hashUsernameVsId.get(username);
+    }
+
     public String[] getCommentsStringArray() {
         String[] commentsString = new String[comments.size()];
         int i = 0;
@@ -147,29 +162,33 @@ public class ImageTimelike implements Parcelable{
         }
 
         for(int i = 0; i<numberOfComments; i++){
-            commentsString.add("  - "+comments.get(i).getUsername()+" "+comments.get(i).getText());
+            commentsString.add(" @"+comments.get(i).getUsername()+" "+comments.get(i).getText());
         }
         return commentsString.toArray(new String[numberOfComments]);
     }
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
+
 
     public static class Comment implements Parcelable{
         String username;
         String avatar;
         String text;
+        String userId;
         long createdTime;
 
-        public Comment(String username, String avatar, String text, long createdTime) {
+        public Comment(String username, String avatar, String text, String userId, long createdTime) {
             this.username = username;
             this.avatar = avatar;
             this.text = text;
             this.createdTime = createdTime;
+            this.userId = userId;
         }
 
         public String getUsername() {
             return username;
+        }
+
+        public String getUserId() {
+            return userId;
         }
 
         public void setUsername(String username) {
@@ -266,7 +285,7 @@ public class ImageTimelike implements Parcelable{
         this.timelike = in.readLong();
         this.type = in.readString();
         this.comments = new ArrayList<Comment>();
-        in.readList(this.comments, List.class.getClassLoader());
+        in.readList(this.comments, Comment.class.getClassLoader());
         this.isPinned = in.readByte() != 0;
     }
 
