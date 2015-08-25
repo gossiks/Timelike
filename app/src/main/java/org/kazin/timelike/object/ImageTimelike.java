@@ -138,7 +138,16 @@ public class ImageTimelike implements Parcelable{
     }
 
     public String getIdByUsername(String username){
-        return hashUsernameVsId.get(username);
+        if(hashUsernameVsId==null & comments!=null){
+            setComments(comments);
+        }
+
+        if(hashUsernameVsId.containsKey(username)) {
+            return hashUsernameVsId.get(username);
+        }
+        else {
+            return "empty";
+        }
     }
 
     public String[] getCommentsStringArray() {
