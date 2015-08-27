@@ -84,18 +84,25 @@ public class FragmentFeed extends Fragment{
             mFeedAdapter = savedInstanceState.getParcelable(ADAPTER_SAVE_INSTANCE);
             setFeedAdapter(mFeedAdapter);
         }
-        return rootView;
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
         if(viewer==null){
             viewer = ViewerFeed.getInstance(fragment);
         }
+
         mRippleBackground.startRippleAnimation();
 
         viewer.onLaunch();
+
+        return rootView;
+    }
+
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 
     @Override
