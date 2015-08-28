@@ -41,6 +41,8 @@ public class FragmentFeed extends Fragment{
     private FeedAdapter mFeedAdapter;
     private RippleBackground mRippleBackground;
 
+    private boolean onDestroyViewWasFired = false;
+
     private void setMVP(FragmentFeed fragment){
         viewer = ViewerFeed.getInstance(fragment);
     }
@@ -89,7 +91,10 @@ public class FragmentFeed extends Fragment{
             viewer = ViewerFeed.getInstance(fragment);
         }
 
-        mRippleBackground.startRippleAnimation();
+        if(!viewer.isOnDestroyViewFired()){
+            mRippleBackground.startRippleAnimation();
+        }
+
 
         viewer.onLaunch();
 
@@ -97,7 +102,11 @@ public class FragmentFeed extends Fragment{
     }
 
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        viewer.onDestroyViewFragment();
+     }
 
     @Override
     public void onStart() {

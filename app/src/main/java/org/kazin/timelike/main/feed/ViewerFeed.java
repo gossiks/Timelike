@@ -18,10 +18,14 @@ import java.util.ArrayList;
  */
 public class ViewerFeed implements FragmentFeed.SetTimelikeInterface {
 
+
+    public final static int VIEWER_FEED_CLASS_ID = 1;
+
     private static ViewerFeed viewer;
     private PresenterFeed presenter;
     private FragmentFeed fragment;
-    public final static int VIEWER_FEED_CLASS_ID = 1;
+
+    private boolean onDestroyViewFired = false;
 
     private void setMVP(FragmentFeed fragment, ViewerFeed viewer){
         this.fragment = fragment;
@@ -81,7 +85,7 @@ public class ViewerFeed implements FragmentFeed.SetTimelikeInterface {
                 feed, viewer));
     }
 
-    public void setMessage(String message){
+    public void setMessage(String message) {
         Toast.makeText(TimelikeApp.getContext(), message, Toast.LENGTH_SHORT);
     }
 
@@ -97,7 +101,13 @@ public class ViewerFeed implements FragmentFeed.SetTimelikeInterface {
         fragment.addTimelike(image);
     }
 
+    public void onDestroyViewFragment(){
+        onDestroyViewFired = true; //walkaround for mRippleBackground, that keeps playing animation after return from backstack. TODO
+    }
 
+    public boolean isOnDestroyViewFired(){
+        return onDestroyViewFired;
+    }
 
     public SimpleCallback getEndFeedListener() {
         return presenter.getEndFeedListener();

@@ -1,6 +1,7 @@
 package org.kazin.timelike.misc;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -12,7 +13,10 @@ import com.skyfishjy.library.RippleBackground;
 
 import org.kazin.timelike.R;
 import org.kazin.timelike.main.feed.FragmentFeed;
+import org.kazin.timelike.main.feed.ViewerFeed;
+import org.kazin.timelike.main.recent.ViewerRecent;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.user.ViewerUser;
 
 import java.util.ArrayList;
 
@@ -78,4 +82,51 @@ public class RecentAdapter2 extends FeedAdapter {
         ExpandableHeightListView comments;
         RippleBackground ripple;
     }
+
+    //Parcelable interface
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(getItems());
+        dest.writeInt(getViewerId());
+    }
+
+    private static RecentAdapter2 getFeedAdapter(Parcel in) {
+        ArrayList<ImageTimelike> items = new ArrayList<ImageTimelike>();
+        in.readList(items, ImageTimelike.class.getClassLoader());
+        int viewerId =  in.readInt();
+        return new RecentAdapter2(TimelikeApp.getContext(), items, getViewer(viewerId));
+    }
+
+    private static FragmentFeed.SetTimelikeInterface getViewer(int viewerId) {
+        FragmentFeed.SetTimelikeInterface viewer = null;
+
+        switch (viewerId){
+            case ViewerFeed.VIEWER_FEED_CLASS_ID:
+                viewer = ViewerFeed.getInstance(null);
+                break;
+            case ViewerRecent.VIEWER_RECENT_CLASS_ID:
+                viewer = ViewerRecent.getInstance();
+                break;
+            case ViewerUser.VIEWER_USER_CLASS_ID:
+                viewer = ViewerUser.getInstance();
+                break;
+        }
+        return viewer;
+    }
+
+    public static final Creator<RecentAdapter2> CREATOR = new Creator<RecentAdapter2>() {
+        public RecentAdapter2 createFromParcel(Parcel source) {
+            return getFeedAdapter(source);
+        }
+
+        public RecentAdapter2[] newArray(int size) {
+            return new RecentAdapter2[size];
+        }
+    };
 }

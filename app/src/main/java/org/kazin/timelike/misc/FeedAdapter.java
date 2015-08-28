@@ -446,6 +446,10 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         return mImageOptions;
     }
 
+    public int getViewerId(){
+        return mViewerId;
+    }
+
     //Parcelable interface
 
     @Override
