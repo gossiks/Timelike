@@ -1,13 +1,17 @@
 package org.kazin.timelike.object;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Alexey on 16.06.2015.
  */
-public class ImageTimelike {
+public class ImageTimelike implements Parcelable{
 
     public final static String TYPE_IMAGE = "image";
     public final static String TYPE_VIDEO = "video";
@@ -16,11 +20,14 @@ public class ImageTimelike {
     String imageUrl;
     String imageId;
     String username;
+    String userId;
     String avatarUrl;
     String description;
     long timelike;
     String type = TYPE_IMAGE;
     ArrayList<Comment> comments=null;
+
+    private HashMap<String, String> hashUsernameVsId;
 
     private boolean isPinned = false;
 
@@ -44,15 +51,16 @@ public class ImageTimelike {
         this.type = type;
     }
 
-    public ImageTimelike(String imageUrl, String imageId, String username, long timelike, String avatarUrl, String description,  String type, ArrayList<Comment> comments) {
+    public ImageTimelike(String imageUrl, String imageId, String username, String userId, long timelike, String avatarUrl, String description,  String type, ArrayList<Comment> comments) {
         this.imageUrl = imageUrl;
         this.imageId = imageId;
         this.username = username;
+        this.userId = userId;
         this.avatarUrl = avatarUrl;
         this.description = description;
         this.timelike = timelike;
         this.type = type;
-        this.comments = comments;
+        setComments(comments);
     }
 
     public void setImageUrl(String imageUrl) {
@@ -121,6 +129,27 @@ public class ImageTimelike {
         return comments;
     }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+        hashUsernameVsId = new HashMap<>();
+        for (Comment c: comments){
+            hashUsernameVsId.put(c.getUsername(), c.getUserId());
+        }
+    }
+
+    public String getIdByUsername(String username){
+        if(hashUsernameVsId==null & comments!=null){
+            setComments(comments);
+        }
+
+        if(hashUsernameVsId.containsKey(username)) {
+            return hashUsernameVsId.get(username);
+        }
+        else {
+            return "empty";
+        }
+    }
+
     public String[] getCommentsStringArray() {
         String[] commentsString = new String[comments.size()];
         int i = 0;
@@ -142,29 +171,33 @@ public class ImageTimelike {
         }
 
         for(int i = 0; i<numberOfComments; i++){
-            commentsString.add("  - "+comments.get(i).getUsername()+" "+comments.get(i).getText());
+            commentsString.add(" @"+comments.get(i).getUsername()+" "+comments.get(i).getText());
         }
         return commentsString.toArray(new String[numberOfComments]);
     }
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
 
-    public static class Comment{
+
+    public static class Comment implements Parcelable{
         String username;
         String avatar;
         String text;
+        String userId;
         long createdTime;
 
-        public Comment(String username, String avatar, String text, long createdTime) {
+        public Comment(String username, String avatar, String text, String userId, long createdTime) {
             this.username = username;
             this.avatar = avatar;
             this.text = text;
             this.createdTime = createdTime;
+            this.userId = userId;
         }
 
         public String getUsername() {
             return username;
+        }
+
+        public String getUserId() {
+            return userId;
         }
 
         public void setUsername(String username) {
@@ -199,5 +232,87 @@ public class ImageTimelike {
         public String toString() {
             return "@"+username+"  "+text;
         }
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.username);
+            dest.writeString(this.avatar);
+            dest.writeString(this.text);
+            dest.writeLong(this.createdTime);
+        }
+
+        protected Comment(Parcel in) {
+            this.username = in.readString();
+            this.avatar = in.readString();
+            this.text = in.readString();
+            this.createdTime = in.readLong();
+        }
+
+        public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+            public Comment createFromParcel(Parcel source) {
+                return new Comment(source);
+            }
+
+            public Comment[] newArray(int size) {
+                return new Comment[size];
+            }
+        };
+    }
+
+    //Parcelable interface for ImageTimeLike
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.imageUrl);
+        dest.writeString(this.imageId);
+        dest.writeString(this.username);
+        dest.writeString(this.avatarUrl);
+        dest.writeString(this.description);
+        dest.writeLong(this.timelike);
+        dest.writeString(this.type);
+        dest.writeList(this.comments);
+        dest.writeByte(isPinned ? (byte) 1 : (byte) 0);
+    }
+
+    protected ImageTimelike(Parcel in) {
+        this.imageUrl = in.readString();
+        this.imageId = in.readString();
+        this.username = in.readString();
+        this.avatarUrl = in.readString();
+        this.description = in.readString();
+        this.timelike = in.readLong();
+        this.type = in.readString();
+        this.comments = new ArrayList<Comment>();
+        in.readList(this.comments, Comment.class.getClassLoader());
+        this.isPinned = in.readByte() != 0;
+    }
+
+    public static final Creator<ImageTimelike> CREATOR = new Creator<ImageTimelike>() {
+        public ImageTimelike createFromParcel(Parcel source) {
+            return new ImageTimelike(source);
+        }
+
+        public ImageTimelike[] newArray(int size) {
+            return new ImageTimelike[size];
+        }
+    };
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

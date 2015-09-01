@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:direction="both"
+        android:id="@+id/swipe_refresh_user_comments_activity"
+        >
+        <org.kazin.timelike.misc.ExpandableHeightListView
+            android:layout_below="@+id/description_feed_item"
+            android:id="@+id/comments_user_comments_activity"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginRight="60dp"
+            android:cacheColorHint="#00000000"
+            android:fadingEdge="none"
+            android:focusable="false"
+            android:scrollbars="none">
+        </org.kazin.timelike.misc.ExpandableHeightListView>
+
+    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
+
+
+    <com.skyfishjy.library.RippleBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ripple_activity_user_comments"
+        app:rb_color="@color/blue_dark_timelike"
+        app:rb_radius="10dp"
+        app:rb_rippleAmount="4"
+        app:rb_duration="1000"
+        app:rb_scale="3"
+        android:layout_below="@+id/image_feed_item"
+
+        ></com.skyfishjy.library.RippleBackground>
+</RelativeLayout>

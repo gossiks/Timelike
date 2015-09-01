@@ -1,19 +1,11 @@
-package org.kazin.timelike.fragment.photo;
+package org.kazin.timelike.main.photo;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
-
-import com.kbeanie.imagechooser.api.ChooserType;
-import com.kbeanie.imagechooser.api.ChosenImage;
-import com.kbeanie.imagechooser.api.ImageChooserListener;
 
 import net.grobas.view.MovingImageView;
 
@@ -21,11 +13,6 @@ import org.kazin.timelike.R;
 
 
 public class FragmentPhoto extends Fragment  {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
 
    private static FragmentPhoto fragment;
    private ViewerPhoto viewer;

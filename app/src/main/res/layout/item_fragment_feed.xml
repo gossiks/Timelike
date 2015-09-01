@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@color/white_textColorPrimary_timelike"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     >
+
 
 
     <ImageView
@@ -13,7 +14,6 @@
         android:id="@+id/image_feed_item"
         android:minHeight="200dp"
         android:paddingTop="2dp"
-
         />
 
 
@@ -25,20 +25,12 @@
         android:textColor="@color/black_textColor_timelike"
         android:id="@+id/description_feed_item"
         android:layout_below="@+id/image_feed_item"
+        android:layout_marginRight="60dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"/>
 
-    <Button
-        android:layout_width="100dp "
-        android:layout_height="100dp"
-        android:id="@+id/like_image_item_user_fragment_feed"
-        android:background="@mipmap/ic_like"
 
-        android:layout_alignBottom="@+id/image_feed_item"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/abc_text_size_small_material"
-        android:textColor="@color/primary_dark_material_light"
-         />
+
 
 
     <org.kazin.timelike.misc.ExpandableHeightListView
@@ -46,11 +38,41 @@
         android:id="@+id/comments_feed_item_user_fragment"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:layout_marginRight="60dp"
         android:cacheColorHint="#00000000"
         android:fadingEdge="none"
         android:focusable="false"
-        android:scrollbars="none"
-        >
+        android:scrollbars="none">
     </org.kazin.timelike.misc.ExpandableHeightListView>
+
+
+    <com.skyfishjy.library.RippleBackground
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ripple_like_button_feed_adapter"
+        app:rb_color="@color/blue_dark_timelike"
+        app:rb_radius="10dp"
+        app:rb_rippleAmount="4"
+        app:rb_duration="1000"
+        app:rb_scale="3"
+        android:layout_below="@+id/image_feed_item"
+
+        >
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/like_image_item_user_fragment_feed"
+            android:background="@mipmap/ic_like"
+
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+
+            />
+
+    </com.skyfishjy.library.RippleBackground>
 
 </RelativeLayout>

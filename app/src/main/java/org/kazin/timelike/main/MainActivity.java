@@ -1,4 +1,4 @@
-package org.kazin.timelike;
+package org.kazin.timelike.main;
 
 import java.util.Locale;
 
@@ -20,10 +20,11 @@ import android.view.ViewGroup;
 
 import com.kbeanie.imagechooser.api.ChooserType;
 
-import org.kazin.timelike.fragment.feed.FragmentFeed;
-import org.kazin.timelike.fragment.photo.FragmentPhoto;
-import org.kazin.timelike.fragment.photo.ViewerPhoto;
-import org.kazin.timelike.fragment.recent.FragmentRecent;
+import org.kazin.timelike.R;
+import org.kazin.timelike.main.feed.FragmentFeed;
+import org.kazin.timelike.main.photo.FragmentPhoto;
+import org.kazin.timelike.main.photo.ViewerPhoto;
+import org.kazin.timelike.main.recent.FragmentRecent;
 import org.kazin.timelike.misc.Const;
 
 

@@ -1,10 +1,10 @@
 package org.kazin.timelike.misc;
 
 
-        import android.content.Context;
-        import android.util.AttributeSet;
-        import android.view.ViewGroup;
-        import android.widget.ListView;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class ExpandableHeightListView extends ListView
 {
@@ -56,4 +56,7 @@ public class ExpandableHeightListView extends ListView
     {
         this.expanded = expanded;
     }
+
+
+
 }

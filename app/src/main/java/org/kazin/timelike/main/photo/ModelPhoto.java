@@ -1,6 +1,5 @@
-package org.kazin.timelike.fragment.photo;
+package org.kazin.timelike.main.photo;
 
-import android.animation.TimeAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -10,12 +9,9 @@ import com.kbeanie.imagechooser.api.ChosenImage;
 import com.kbeanie.imagechooser.api.ImageChooserListener;
 import com.kbeanie.imagechooser.api.ImageChooserManager;
 
-import org.kazin.timelike.MainActivity;
-import org.kazin.timelike.backend.BackendManager;
-import org.kazin.timelike.misc.TimelikeApp;
+import org.kazin.timelike.main.MainActivity;
 
 import java.io.File;
-import java.sql.Time;
 
 /**
  * Created by Alexey on 17.07.2015.

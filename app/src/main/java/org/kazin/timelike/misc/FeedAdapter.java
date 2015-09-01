@@ -1,7 +1,10 @@
 package org.kazin.timelike.misc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -9,8 +12,10 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -25,21 +30,28 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 
 import org.kazin.timelike.R;
-import org.kazin.timelike.fragment.feed.FragmentFeed;
+import org.kazin.timelike.main.MainActivity;
+import org.kazin.timelike.main.feed.FragmentFeed;
+import org.kazin.timelike.main.feed.ViewerFeed;
+import org.kazin.timelike.main.recent.ViewerRecent;
 import org.kazin.timelike.object.ImageTimelike;
+import org.kazin.timelike.user.UserActivity;
+import org.kazin.timelike.user.ViewerUser;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 /**
  * Created by Alexey on 19.06.2015.
  */
-public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer {
+public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter, SectionIndexer, Parcelable {
 
     private ArrayList<ImageTimelike> mItems;
     private LayoutInflater mInflater;
@@ -47,31 +59,37 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     private final ImageLoader mImageLoader;
     private final DisplayImageOptions mImageOptions;
 
-    public FeedAdapter(Context context, ArrayList<ImageTimelike> images) {
+    private FragmentFeed.SetTimelikeInterface mViewer;
+    private int mViewerId;
+
+    private int mTagColor;
+
+    public FeedAdapter(Context context, ArrayList<ImageTimelike> images, FragmentFeed.SetTimelikeInterface viewer) {
+        if(context ==null){
+            context = TimelikeApp.getContext();
+        }
         mInflater = LayoutInflater.from(context);
         mContext = context;
 
-        ArrayList<ImageTimelike> items = new ArrayList<>(images.size()*2);
-        //ArrayList<Integer> header
-        /*ImageTimelike tempImage;
-        for(int i = 0; i<images.size();i++){
-            tempImage = images.get(i);
-            items.add(tempImage);
-        }
-        mItems = items;*/
+        mViewer = viewer;
+        mViewerId = mViewer.getViewerClassId();
 
         if(!ImageLoader.getInstance().isInited()){
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
             ImageLoader.getInstance().init(config);
         }
 
+
+        mTagColor = mContext.getResources().getColor(R.color.blue_medium_timelike);
+
         mImageLoader = ImageLoader.getInstance();
 
-        mImageOptions = new DisplayImageOptions.Builder()
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).build();
+        mImageOptions = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED).cacheOnDisk(true).cacheInMemory(true).build();
 
         mItems = images;
     }
+
 
     @Override
     public int getCount() {
@@ -102,6 +120,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderImage.comments.setExpanded(true);
 
             holderImage.like_button = (Button) convertView.findViewById(R.id.like_image_item_user_fragment_feed);
+            holderImage.ripple_like = (RippleBackground) convertView.findViewById(R.id.ripple_like_button_feed_adapter);
 
             convertView.setTag(holderImage);
         }
@@ -109,7 +128,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderImage = (ViewHolderImage) convertView.getTag();
         }
 
-        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button));
+        holderImage.like_button.setOnTouchListener(new FragmentFeed.LikeListener(image.getImageId(), holderImage.like_button, mViewer, holderImage.ripple_like));
 
         mImageLoader.displayImage(image.getImageUrl(), holderImage.image, mImageOptions);
         setTags(holderImage.description, " @" + image.getUsername() + " " + image.getDescription());
@@ -119,10 +138,11 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         }
         else{
 
-            holderImage.comments.setAdapter(new ArrayAdapter<>(mContext
-                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3)));//3 - because who cares about other comments.
+            holderImage.comments.setAdapter(new ArrayAdapterWithTags(mContext
+                    , R.layout.item_comment_frament_feed, image.getCommentsStringArray(3), image, mViewer));//3 - because who cares about other comments.
 
-            setListViewHeightBasedOnItems(holderImage.comments);
+            //setListViewHeightBasedOnItems(holderImage.comments);
+
         }
 
 
@@ -147,8 +167,14 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
             holderHeader = (ViewHolderHeader) convertView.getTag();
         }
 
-        ImageTimelike user = mItems.get(position);
+        final ImageTimelike user = mItems.get(position);
         Picasso.with(mContext).load(user.getAvatarUrl()).into(holderHeader.avatar);// Faster than universal image loader. Here. Suprisingly.
+        holderHeader.avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewer.navigateToUserActivity(user.getUserId());
+            }
+        });
         holderHeader.username.setText(user.getUsername());
 
         return convertView;
@@ -203,7 +229,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
     public void addAll(ArrayList<ImageTimelike> images) {
         for(ImageTimelike addingImage:images){
-            if(containsImage(addingImage,mItems)){
+            if(!containsImage(addingImage,mItems)){
                 mItems.add(addingImage);
             }
         }
@@ -224,12 +250,15 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
         return contains;
     }
 
+
+
     //misc for FeedAdapter
     private class ViewHolderImage {
         ImageView image;
         TextView description;
         Button like_button;
         ExpandableHeightListView comments;
+        RippleBackground ripple_like;
     }
 
     private class ViewHolderHeader {
@@ -286,7 +315,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
 
         if(timelike<1*1000){
-            timelikeCrop = noDigit.format(timelike)+" sec";
+            timelikeCrop = noDigit.format(timelike)+" "+mContext.getString(R.string.seconds_feed_adapter);
         } else
         if (timelike<1000*1000){
             timelikeCrop = twoDigit.format(timelike / 1000)+"k";
@@ -322,7 +351,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
 
 
 
-    public void setTags(TextView pTextView, String pTagString) {
+    public void setTags(TextView pTextView, final String pTagString) {
         SpannableString string = new SpannableString(pTagString);
 
         int start = -1;
@@ -347,7 +376,7 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
                         @Override
                         public void updateDrawState(TextPaint ds) {
                             // link color
-                            ds.setColor(Color.parseColor("#33b5e5"));
+                            ds.setColor(mTagColor);
                             ds.setUnderlineText(false);
                         }
                     }, start, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -366,18 +395,18 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
                         // space after
                     }
 
-                    final String tag = pTagString.substring(start, i);
+                    //final String tag = pTagString.substring(start, i); //very rarely involves StringIndexOutOfBoundsException, so deprecated.
                     string.setSpan(new ClickableSpan() {
 
                         @Override
                         public void onClick(View widget) {
-                            Log.d("Hash", String.format("Clicked %s!", tag));
+                            Log.d("Hash", String.format("Clicked %s!", pTagString));
                         }
 
                         @Override
                         public void updateDrawState(TextPaint ds) {
                             // link color
-                            ds.setColor(Color.parseColor("#33b5e5"));
+                            ds.setColor(mTagColor);
                             ds.setUnderlineText(false);
                         }
                     }, start, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -391,6 +420,11 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     }
 
     //misc getters
+
+
+    public FragmentFeed.SetTimelikeInterface getViewer() {
+        return mViewer;
+    }
 
     public ArrayList<ImageTimelike> getItems() {
         return mItems;
@@ -411,4 +445,55 @@ public class FeedAdapter extends BaseAdapter implements StickyListHeadersAdapter
     public DisplayImageOptions getImageOptions() {
         return mImageOptions;
     }
+
+    public int getViewerId(){
+        return mViewerId;
+    }
+
+    //Parcelable interface
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.mItems);
+        dest.writeInt(mViewerId);
+    }
+
+    private static FeedAdapter getFeedAdapter(Parcel in) {
+        ArrayList<ImageTimelike> items = new ArrayList<ImageTimelike>();
+        in.readList(items, ImageTimelike.class.getClassLoader());
+        int viewerId =  in.readInt();
+        return new FeedAdapter(TimelikeApp.getContext(), items, getViewer(viewerId));
+    }
+
+    private static FragmentFeed.SetTimelikeInterface getViewer(int viewerId) {
+        FragmentFeed.SetTimelikeInterface viewer = null;
+
+        switch (viewerId){
+            case ViewerFeed.VIEWER_FEED_CLASS_ID:
+                viewer = ViewerFeed.getInstance(null);
+                break;
+            case ViewerRecent.VIEWER_RECENT_CLASS_ID:
+                viewer = ViewerRecent.getInstance();
+                break;
+            case ViewerUser.VIEWER_USER_CLASS_ID:
+                viewer = ViewerUser.getInstance();
+                break;
+        }
+        return viewer;
+    }
+
+    public static final Creator<FeedAdapter> CREATOR = new Creator<FeedAdapter>() {
+        public FeedAdapter createFromParcel(Parcel source) {
+            return getFeedAdapter(source);
+        }
+
+        public FeedAdapter[] newArray(int size) {
+            return new FeedAdapter[size];
+        }
+    };
 }

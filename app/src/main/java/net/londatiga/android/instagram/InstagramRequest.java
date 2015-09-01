@@ -1,6 +1,7 @@
 package net.londatiga.android.instagram;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import net.londatiga.android.instagram.util.*;
 
@@ -151,7 +152,8 @@ public class InstagramRequest {
 				
 				requestUrl = requestUri + ((requestUri.contains("?")) ? "&" + requestParam : "?" + requestParam); 
  			}
-			
+
+			Log.d("apkapkTest", "RequestUrl: "+requestUrl);
 			Debug.i("GET " + requestUrl);
 			
 			HttpClient httpClient 		= new DefaultHttpClient();		

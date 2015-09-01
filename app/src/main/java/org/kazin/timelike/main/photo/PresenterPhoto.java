@@ -1,9 +1,7 @@
-package org.kazin.timelike.fragment.photo;
+package org.kazin.timelike.main.photo;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-
-import org.kazin.timelike.fragment.feed.ModelFeed;
 
 /**
  * Created by Alexey on 17.07.2015.

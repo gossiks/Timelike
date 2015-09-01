@@ -1,4 +1,4 @@
-package org.kazin.timelike.fragment.photo;
+package org.kazin.timelike.main.photo;
 
 
 import android.content.Intent;
